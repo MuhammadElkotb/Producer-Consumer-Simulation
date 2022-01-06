@@ -16,7 +16,7 @@ let queueArea = new Map<string, Path2D>();
 
 //flag to activate buttons
 
-var draw_line : shapeBack|null = null;
+var draw_line : shapeBack = null;
 
 //----------------------------------------------------------------------//
 
@@ -34,6 +34,8 @@ var machineButtonFlag : boolean = false;
 var queueButtonFlag : boolean = false;
 var lineButtonFlag : boolean = false;
 
+
+var tempType : string = "";
 
 //----------------------------------------------------------------------//
 
@@ -81,11 +83,11 @@ export class HomeComponent {
 
   title = 'Front-End';
 
+  
+
   constructor() {}
 
 
-
-//----------------------------------------------------------------------//
 
 
 
@@ -218,7 +220,6 @@ export class HomeComponent {
       createdLine = false;
 
       var selectLine = false;
-      var tempType : string;
       boardGlobal.addEventListener("mousedown",e=>{
         if(!createdLine &&  lineButtonFlag ){
           for(var shape of shapesBack){
@@ -238,9 +239,13 @@ export class HomeComponent {
                     }
                     selectLine = true;
                     createdLine = true
+                    tempType = "machine";
+
+
                 }
               }else if(shape.type == "queue"){
                 if(canvasGlobal.isPointInPath( queueArea.get(shape.shapeID),e.offsetX,e.offsetY)){
+                  console.log("INSIDE IF MOUSE DOWN");
                   draw_line={
                     x : e.offsetX,
                     y :e.offsetY,
@@ -255,15 +260,11 @@ export class HomeComponent {
                     }
                     selectLine = true;
                     createdLine = true
+                    tempType = "queue";
                 }
               }
-
-              tempType = shape.type;
           }
         }
-
-
-
       });
 
       boardGlobal.addEventListener("mousemove", e => {
@@ -283,47 +284,72 @@ export class HomeComponent {
       boardGlobal.addEventListener("mouseup", e => {
         if(lineButtonFlag){
           for(var shape of shapesBack){
-            if(shape.type == "machine" && shape.type != tempType){
-              if(canvasGlobal.isPointInPath( machineArea.get(shape.shapeID),e.offsetX,e.offsetY)){
-                createLineFlag =false;
-                createdLine = true;
-                selectLine = false;
-                if(draw_line != null && (draw_line.width != 0 && draw_line.height != 0)){
-                  this.placeElement(draw_line, "");
-                  shapesBack.push(draw_line);
-                }
-                draw_line = null;
-                document.getElementById("line")!.style.backgroundColor = "transparent"
-              }
-            }else if(shape.type == "queue" && shape.type != tempType){
-              if(canvasGlobal.isPointInPath( queueArea.get(shape.shapeID),e.offsetX,e.offsetY)){
-                createLineFlag =false;
-                createdLine = true;
-                selectLine = false;
-                if(draw_line != null && (draw_line.width != 0 && draw_line.height != 0)){
-                  this.placeElement(draw_line, "");
-                  shapesBack.push(draw_line);
-                }
-                draw_line = null;
-                document.getElementById("line")!.style.backgroundColor = "transparent"
-              }
-            }
-            else {
-              selectLine = false;
-              createLineFlag = false;
-              lineButtonFlag = false;
-              createdLine = false;
-              draw_line = null;
-              canvasGlobal.clearRect(0,0,1380,675);
+            switch(tempType.concat(shape.type)){
+              case "queuemachine":
 
-    
-              for(var i = 0; i < shapesBack.length; i++){
-                this.placeElement(shapesBack[i], "");
-              }
+                if(canvasGlobal.isPointInPath( machineArea.get(shape.shapeID),e.offsetX,e.offsetY)){
+                  console.log("INSIDE CASE 1");
 
+                  createLineFlag =false;
+                  createdLine = true;
+                  selectLine = false;
+                  lineButtonFlag = false;
+  
+                  console.log(draw_line);
+                  if(draw_line != null && (draw_line.width != 0 && draw_line.height != 0)){
+                  
+                    this.placeElement(draw_line, "");
+                    shapesBack.push(draw_line);
+                  }
+                  draw_line = null;
+                  document.getElementById("line")!.style.backgroundColor = "transparent";
+                }
+                break;
+  
+              
+              case "machinequeue": 
+                if(canvasGlobal.isPointInPath( queueArea.get(shape.shapeID),e.offsetX,e.offsetY)){
+                console.log("INSIDE CASE 2");
+
+                  createLineFlag = false;
+                  createdLine = true;
+                  selectLine = false;
+                  lineButtonFlag = false;
+  
+                  if(draw_line != null && (draw_line.width != 0 && draw_line.height != 0)){
+                    this.placeElement(draw_line, "");
+                    shapesBack.push(draw_line);
+                  }
+                  draw_line = null;
+                  document.getElementById("line")!.style.backgroundColor = "transparent";
+                }
+                break;
+              
+              
+                default : 
+                  canvasGlobal.clearRect(0,0,1380,675);
+                  createLineFlag =false;
+                  createdLine = true;
+                  selectLine = false;
+                  lineButtonFlag = false;
+                  document.getElementById("line")!.style.backgroundColor = "transparent"
+                  for(var i = 0; i < shapesBack.length; i++){
+                    this.placeElement(shapesBack[i], "");
+                  }
+                  break;
             }
+
+              
+                        
+          }
+          draw_line = null;
+
+          
+          for(var i = 0; i < shapesBack.length; i++){
+            this.placeElement(shapesBack[i], "");
           }
         }
+        tempType = "";
 
 
       });
@@ -388,6 +414,8 @@ export class HomeComponent {
         machine = null;
 
         document.getElementById("machine")!.style.backgroundColor = "transparent"
+        console.log("Machine", machineArea);
+
 
       }
 
@@ -447,6 +475,8 @@ export class HomeComponent {
         createdQueue = true;
         createQueueFlag = false;
         queue = null;
+        console.log("Queue", queueArea);
+
 
         document.getElementById("queue")!.style.backgroundColor = "transparent"
 

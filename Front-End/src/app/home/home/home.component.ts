@@ -1,3 +1,4 @@
+import { productionNetworkElement } from './productionNetworkElement';
 import { Component, OnInit } from '@angular/core';
 
 
@@ -11,6 +12,7 @@ var shapesBack:shapeBack[] = [];
 //mapping between shape ID and its area on canvas
 let machineArea = new Map<string, Path2D>();
 let queueArea = new Map<string, Path2D>();
+let productionNetwork = new Map<productionNetworkElement,productionNetworkElement[]>();
 
 //----------------------------------------------------------------------//
 
@@ -219,6 +221,7 @@ export class HomeComponent {
       createLineFlag = true;
       createdLine = false;
 
+      var fromElement:productionNetworkElement;
       var selectLine = false;
       boardGlobal.addEventListener("mousedown",e=>{
         if(!createdLine &&  lineButtonFlag ){
@@ -240,7 +243,7 @@ export class HomeComponent {
                     selectLine = true;
                     createdLine = true
                     tempType = "machine";
-
+                    fromElement = new productionNetworkElement(shape.shapeID,"machine");
 
                 }
               }else if(shape.type == "queue"){
@@ -261,6 +264,8 @@ export class HomeComponent {
                     selectLine = true;
                     createdLine = true
                     tempType = "queue";
+                    fromElement = new productionNetworkElement(shape.shapeID,"queue")
+
                 }
               }
           }
@@ -282,7 +287,7 @@ export class HomeComponent {
 
       });
       boardGlobal.addEventListener("mouseup", e => {
-        if(lineButtonFlag){
+        if(lineButtonFlag && fromElement != null){
           for(var shape of shapesBack){
             switch(tempType.concat(shape.type)){
               case "queuemachine":
@@ -303,6 +308,15 @@ export class HomeComponent {
                   }
                   draw_line = null;
                   document.getElementById("line")!.style.backgroundColor = "transparent";
+                  if(productionNetwork.get(fromElement) !== undefined){
+                    productionNetwork.get(fromElement)?.push(new productionNetworkElement(shape.shapeID,"machine"))
+                  }
+                  else{
+                    productionNetwork.set(fromElement,[new productionNetworkElement(shape.shapeID,"machine")])
+                  }
+                  console.log(productionNetwork);
+                  fromElement = null;
+
                 }
                 break;
   
@@ -322,6 +336,17 @@ export class HomeComponent {
                   }
                   draw_line = null;
                   document.getElementById("line")!.style.backgroundColor = "transparent";
+
+                  if(productionNetwork.get(fromElement !== undefined){
+                    console.log("lol")
+                    productionNetwork.get(fromElement)?.push(new productionNetworkElement(shape.shapeID,"queue"))
+  
+                  }else{
+                    productionNetwork.set(fromElement,[new productionNetworkElement(shape.shapeID,"queue")])
+                  }
+                  fromElement = null;
+                  console.log(productionNetwork);
+
                 }
                 break;
               
@@ -337,10 +362,11 @@ export class HomeComponent {
                     this.placeElement(shapesBack[i], "");
                   }
                   break;
-            }
+               
 
-              
-                        
+              }
+            } 
+                       
           }
           draw_line = null;
 
@@ -348,7 +374,7 @@ export class HomeComponent {
           for(var i = 0; i < shapesBack.length; i++){
             this.placeElement(shapesBack[i], "");
           }
-        }
+        
         tempType = "";
 
 
@@ -359,8 +385,11 @@ export class HomeComponent {
 
       }
 
-
     }
+
+
+    
+
 
 //----------------------------------------------------------------------//
 
@@ -414,7 +443,6 @@ export class HomeComponent {
         machine = null;
 
         document.getElementById("machine")!.style.backgroundColor = "transparent"
-        console.log("Machine", machineArea);
 
 
       }
@@ -475,7 +503,6 @@ export class HomeComponent {
         createdQueue = true;
         createQueueFlag = false;
         queue = null;
-        console.log("Queue", queueArea);
 
 
         document.getElementById("queue")!.style.backgroundColor = "transparent"

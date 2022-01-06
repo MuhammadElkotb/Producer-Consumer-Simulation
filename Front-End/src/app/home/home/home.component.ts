@@ -9,7 +9,9 @@ var shapesBack:shapeBack[] = [];
 //----------------------------------------------------------------------//
 
 //mapping between shape ID and its area on canvas
-let canvasArea = new Map<string, Path2D>();
+let machineArea = new Map<string, Path2D>();
+let queueArea = new Map<string, Path2D>();
+
 
 //----------------------------------------------------------------------//
 
@@ -30,7 +32,6 @@ var create_rect_flag : boolean = false;
 var created_rect : boolean = false;
 
 var circleButtonFlag : boolean = false;
-var squareButtonFlag : boolean = false;
 var rectButtonFlag : boolean = false;
 var lineButtonFlag : boolean = false;
 
@@ -129,7 +130,7 @@ export class HomeComponent {
           canvasGlobal.arc(x, y, 0.5*width, 0, 2*Math.PI);
           canvasGlobal.stroke();
         }
-        canvasArea.set(ID, area);
+        queueArea.set(ID, area);
         area = null;
         break;
       case "rect" :
@@ -155,7 +156,7 @@ export class HomeComponent {
           canvasGlobal.rect(x, y, width, height);
           canvasGlobal.stroke();
         }
-        canvasArea.set(ID, area);
+        machineArea.set(ID, area);
         area = null;
         break;
         case "line":
@@ -183,7 +184,6 @@ export class HomeComponent {
           canvasGlobal.closePath();
 
 
-          canvasArea.set(ID, area);
           area = null;
           break;
         default:
@@ -241,7 +241,6 @@ export class HomeComponent {
       boardGlobal.addEventListener("mousemove", e => {
         if(create_line_flag && selectLine && (draw_line != null) && lineButtonFlag && created_line){
           canvasGlobal.clearRect(0,0,1380,675);
-          canvasArea.delete(draw_line.shapeID);
 
           draw_line.width = e.offsetX;
           draw_line.height = e.offsetY;
@@ -309,7 +308,7 @@ export class HomeComponent {
           width : 60,
           height : 60,
           stCo : "white",
-          fiCo : "red",
+          fiCo : "darkred",
           type : "circle",
           is_filled : 1,
           stWi : 2,
@@ -368,10 +367,10 @@ export class HomeComponent {
         rect={
           x : e.offsetX,
           y :e.offsetY,
-          width : 60,
-          height : 30,
+          width : 90,
+          height : 50,
           stCo : "white",
-          fiCo : "yellow",
+          fiCo : "darkgreen",
           type : "rect",
           is_filled : 1,
           stWi : 2,
@@ -408,7 +407,8 @@ export class HomeComponent {
     var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
     var canvasGlobal = boardGlobal.getContext("2d")!;
     canvasGlobal.clearRect(0,0,1380,675)
-    canvasArea.clear()
+    machineArea.clear()
+    queueArea.clear()
     shapesBack = []
   }
 

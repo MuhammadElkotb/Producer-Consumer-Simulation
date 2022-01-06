@@ -130,7 +130,7 @@ export class HomeComponent {
           canvasGlobal.arc(x, y, 0.5*width, 0, 2*Math.PI);
           canvasGlobal.stroke();
         }
-        queueArea.set(ID, area);
+        machineArea.set(ID, area);
         area = null;
         break;
       case "rect" :
@@ -156,7 +156,7 @@ export class HomeComponent {
           canvasGlobal.rect(x, y, width, height);
           canvasGlobal.stroke();
         }
-        machineArea.set(ID, area);
+        queueArea.set(ID, area);
         area = null;
         break;
         case "line":
@@ -177,6 +177,7 @@ export class HomeComponent {
           canvasGlobal.beginPath();
           canvasGlobal.strokeStyle = stCo;
           canvasGlobal.lineWidth = stWi;
+          canvasGlobal.fillStyle = "white"
           canvasGlobal.moveTo(width,height);
           canvasGlobal.arc(width,height,20,angle1,angle2,true);
           canvasGlobal.lineTo(width,height);
@@ -217,23 +218,47 @@ export class HomeComponent {
 
       var selectLine = false;
       boardGlobal.addEventListener("mousedown",e=>{
+        if(!created_line &&  lineButtonFlag ){
+          for(var shape of shapesBack){
+              if(shape.type == "circle"){
+                if(canvasGlobal.isPointInPath( machineArea.get(shape.shapeID),e.offsetX,e.offsetY)){
+                  draw_line={
+                    x : e.offsetX,
+                    y :e.offsetY,
+                    width : 0,
+                    height : 0,
+                    stCo : "white",
+                    fiCo : "black",
+                    type : "line",
+                    is_filled : 1,
+                    stWi : 1,
+                    shapeID : get_new_ID()
+                    }
+                    selectLine = true;
+                    created_line = true
+                }
+              }else if(shape.type == "rect"){
+                if(canvasGlobal.isPointInPath( queueArea.get(shape.shapeID),e.offsetX,e.offsetY)){
+                  draw_line={
+                    x : e.offsetX,
+                    y :e.offsetY,
+                    width : 0,
+                    height : 0,
+                    stCo : "white",
+                    fiCo : "black",
+                    type : "line",
+                    is_filled : 1,
+                    stWi : 1,
+                    shapeID : get_new_ID()
+                    }
+                    selectLine = true;
+                    created_line = true
+                }
+              }
 
-        if(!created_line &&  lineButtonFlag){
-          draw_line={
-          x : e.offsetX,
-          y :e.offsetY,
-          width : 0,
-          height : 0,
-          stCo : "white",
-          fiCo : "black",
-          type : "line",
-          is_filled : 1,
-          stWi : 1,
-          shapeID : get_new_ID()
           }
-          selectLine = true;
-          created_line = true
         }
+
 
 
       });
@@ -254,20 +279,35 @@ export class HomeComponent {
       });
       boardGlobal.addEventListener("mouseup", e => {
         if(lineButtonFlag){
-          create_line_flag =false;
-          created_line = true;
-          selectLine = false;
-        if(draw_line != null && (draw_line.width != 0 && draw_line.height != 0)){
-
-            this.drawShape(draw_line, "");
-            shapesBack.push(draw_line);
-
+          for(var shape of shapesBack){
+            if(shape.type == "circle"){
+              if(canvasGlobal.isPointInPath( machineArea.get(shape.shapeID),e.offsetX,e.offsetY)){
+                create_line_flag =false;
+                created_line = true;
+                selectLine = false;
+                if(draw_line != null && (draw_line.width != 0 && draw_line.height != 0)){
+                  this.drawShape(draw_line, "");
+                  shapesBack.push(draw_line);
+                }
+                draw_line = null;
+                document.getElementById("line")!.style.backgroundColor = "transparent"
+              }
+            }else if(shape.type == "rect"){
+              if(canvasGlobal.isPointInPath( queueArea.get(shape.shapeID),e.offsetX,e.offsetY)){
+                create_line_flag =false;
+                created_line = true;
+                selectLine = false;
+                if(draw_line != null && (draw_line.width != 0 && draw_line.height != 0)){
+                  this.drawShape(draw_line, "");
+                  shapesBack.push(draw_line);
+                }
+                draw_line = null;
+                document.getElementById("line")!.style.backgroundColor = "transparent"
+              }
+            }
+          }
         }
 
-        draw_line = null;
-
-        document.getElementById("line")!.style.backgroundColor = "transparent"
-        }
 
       });
 

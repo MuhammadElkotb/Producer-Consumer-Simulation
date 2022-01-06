@@ -215,19 +215,11 @@ export class HomeComponent {
 //----------------------------------------------------------------------//
     createLine(){
       create_circle_flag = false;
-      create_square_flag = false;
       create_rect_flag = false;
-      create_triangle_flag = false;
-      create_ellipse_flag = false;
+
       created_circle = false;
-      created_square = false;
       created_rect = false;
-      created_triangle = false;
-      created_ellipse = false;
-      move_flag = false;
-      copy_flag = false;
-      remove_flag = false;
-      resize_flag = false;
+
       var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
       var canvasGlobal = boardGlobal.getContext("2d")!;
 
@@ -242,7 +234,7 @@ export class HomeComponent {
       var selectLine = false;
       boardGlobal.addEventListener("mousedown",e=>{
 
-        if(!created_line && (draw_line != null) && lineButtonFlag){
+        if(!created_line && lineButtonFlag){
           draw_line={
           x : e.offsetX,
           y :e.offsetY,
@@ -307,22 +299,12 @@ export class HomeComponent {
 //----------------------------------------------------------------------//
 
   createCircle(){
-    create_square_flag = false;
     create_line_flag = false;
     create_rect_flag = false;
-    create_triangle_flag = false;
-    create_ellipse_flag = false;
 
-    created_square = false;
     created_line = false;
     created_rect = false;
-    created_triangle = false;
-    created_ellipse = false;
 
-    move_flag = false;
-    copy_flag = false;
-    remove_flag = false;
-    resize_flag = false;
 
     create_circle_flag = true;
     created_circle = false;
@@ -331,17 +313,17 @@ export class HomeComponent {
     var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
     var canvasGlobal = boardGlobal.getContext("2d")!;
 
-    var circle : shapeBack|null;
+    var circle : shapeBack;
 
     boardGlobal.addEventListener("mousedown", e=> {
 
-      if(!created_circle && (circle != null) && circleButtonFlag){
+      if(!created_circle && circleButtonFlag){
 
         circle={
           x : e.offsetX,
-          y :e.offsetY,
-          width : 30,
-          height : 30,
+          y : e.offsetY,
+          width : 60,
+          height : 60,
           stCo : "white",
           fiCo : "red",
           type : "circle",
@@ -351,9 +333,9 @@ export class HomeComponent {
           }
         create_circle_flag = false;
         created_circle = true;
+        console.log(circle);
         this.drawShape(circle, "");
         shapesBack.push(circle);
-        circle = null
         }
 
     });
@@ -379,22 +361,13 @@ export class HomeComponent {
 //----------------------------------------------------------------------//
 
   createRect(){
-    create_square_flag = false;
     create_line_flag = false;
     create_circle_flag = false;
-    create_triangle_flag = false;
-    create_ellipse_flag = false;
 
-    created_square = false;
     created_line = false;
     created_circle = false;
-    created_triangle = false;
-    created_ellipse = false;
 
-    move_flag = false;
-    copy_flag = false;
-    remove_flag = false;
-    resize_flag = false;
+    
 
     create_rect_flag = true;
     created_rect = false;
@@ -407,7 +380,7 @@ export class HomeComponent {
 
     boardGlobal.addEventListener("mousedown",e=>{
 
-      if(!created_rect && (rect != null) && rectButtonFlag){
+      if(!created_rect && rectButtonFlag){
 
         rect={
           x : e.offsetX,
@@ -468,52 +441,21 @@ export class HomeComponent {
     if(create_line_flag){
 
       circleButtonFlag = false;
-      squareButtonFlag  = false;
       rectButtonFlag  = false;
-      triangleButtonFlag  = false;
-      ellipseButtonFlag  = false;
 
-      moveButtonFlag = false;
-      resizeButtonFlag = false;
-      copyButtonFlag = false;
-      removeButtonFlag = false;
 
       lineButtonFlag = true;
 
 
 
     }
-    if(create_square_flag){
-
-      circleButtonFlag = false;
-      rectButtonFlag  = false;
-      lineButtonFlag  = false;
-      triangleButtonFlag  = false;
-      ellipseButtonFlag  = false;
-
-      moveButtonFlag = false;
-      resizeButtonFlag = false;
-      copyButtonFlag = false;
-      removeButtonFlag = false;
-
-      squareButtonFlag = true;
-      draw_line = null;
-
-    }
+  
     if(create_circle_flag){
 
 
 
-      squareButtonFlag = false;
       rectButtonFlag = false;
       lineButtonFlag = false;
-      triangleButtonFlag = false;
-      ellipseButtonFlag = false;
-      moveButtonFlag = false;
-      resizeButtonFlag = false;
-      copyButtonFlag = false;
-      removeButtonFlag = false;
-
       circleButtonFlag = true;
 
       draw_line = null;
@@ -523,139 +465,16 @@ export class HomeComponent {
     if(create_rect_flag){
 
       circleButtonFlag  = false;
-      squareButtonFlag = false;
       lineButtonFlag = false;
-      triangleButtonFlag = false;
-      ellipseButtonFlag = false;
-      moveButtonFlag = false;
-      resizeButtonFlag = false;
-      copyButtonFlag = false;
-      removeButtonFlag = false;
 
       rectButtonFlag = true;
       draw_line = null;
 
 
     }
-    if(create_triangle_flag){
+    
 
-      circleButtonFlag = false;
-      squareButtonFlag = false;
-      rectButtonFlag  = false;
-      lineButtonFlag = false;
-      ellipseButtonFlag = false;
-      moveButtonFlag = false;
-      resizeButtonFlag = false;
-      copyButtonFlag = false;
-      removeButtonFlag = false;
-
-      triangleButtonFlag = true;
-      draw_line = null;
-
-
-
-    }
-    if(create_ellipse_flag){
-
-
-      circleButtonFlag = false;
-      squareButtonFlag = false;
-      rectButtonFlag = false;
-      lineButtonFlag = false;
-      triangleButtonFlag = false;
-
-      moveButtonFlag = false;
-      resizeButtonFlag = false;
-      copyButtonFlag = false;
-      removeButtonFlag = false;
-
-      draw_line = null;
-
-
-
-      ellipseButtonFlag = true;
-
-    }
-
-    if(move_flag){
-      circleButtonFlag = false;
-      squareButtonFlag = false;
-      rectButtonFlag = false;
-      lineButtonFlag = false;
-      triangleButtonFlag = false;
-      ellipseButtonFlag = false;
-
-      draw_line = null;
-
-      removeButtonFlag = false;
-      resizeButtonFlag = false;
-      copyButtonFlag = false;
-
-      moveButtonFlag = true;
-
-
-
-      ellipseButtonFlag = true;
-    }
-    if(remove_flag){
-      circleButtonFlag = false;
-      squareButtonFlag = false;
-      rectButtonFlag = false;
-      lineButtonFlag = false;
-      triangleButtonFlag = false;
-      ellipseButtonFlag = false;
-
-      draw_line = null;
-      moveButtonFlag = false;
-      resizeButtonFlag = false;
-      copyButtonFlag = false;
-
-
-      removeButtonFlag = true;
-
-
-    }
-    if(copy_flag){
-      circleButtonFlag = false;
-      squareButtonFlag = false;
-      rectButtonFlag = false;
-      lineButtonFlag = false;
-      triangleButtonFlag = false;
-      ellipseButtonFlag = false;
-      draw_line = null;
-
-      moveButtonFlag = false;
-      resizeButtonFlag = false;
-      removeButtonFlag = false;
-
-      copyButtonFlag = true;
-
-
-
-    }
-    if(resize_flag){
-      circleButtonFlag = false;
-      squareButtonFlag = false;
-      rectButtonFlag = false;
-      lineButtonFlag = false;
-      triangleButtonFlag = false;
-      ellipseButtonFlag = false;
-
-      moveButtonFlag = false;
-      copyButtonFlag = false;
-      removeButtonFlag = false;
-
-      draw_line = null;
-
-      resizeButtonFlag = true;
-
-
-    }
-
-    if(!create_square_flag){
-      document.getElementById("square")!.style.backgroundColor = "rgb(246, 129, 60)"
-
-    }
+   
     if(!create_rect_flag){
       document.getElementById("rect")!.style.backgroundColor = "rgb(246, 129, 60)"
 
@@ -668,30 +487,7 @@ export class HomeComponent {
       document.getElementById("line")!.style.backgroundColor = "rgb(246, 129, 60)"
 
     }
-    if(!create_ellipse_flag){
-      document.getElementById("ellipse")!.style.backgroundColor = "rgb(246, 129, 60)"
-
-    }
-    if(!create_triangle_flag){
-      document.getElementById("triangle")!.style.backgroundColor = "rgb(246, 129, 60)"
-
-    }
-    if(!move_flag){
-      document.getElementById("move")!.style.backgroundColor = "rgb(246, 129, 60)"
-
-    }
-    if(!copy_flag){
-      document.getElementById("copy")!.style.backgroundColor = "rgb(246, 129, 60)"
-
-    }
-    if(!resize_flag){
-      document.getElementById("resize")!.style.backgroundColor = "rgb(246, 129, 60)"
-
-    }
-    if(!remove_flag){
-      document.getElementById("remove")!.style.backgroundColor = "rgb(246, 129, 60)"
-
-    }
+   
 
   }
 

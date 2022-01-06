@@ -308,7 +308,7 @@ export class HomeComponent {
                   }
                   draw_line = null;
                   document.getElementById("line")!.style.backgroundColor = "transparent";
-                  if(productionNetwork.get(fromElement) !== undefined){
+                  if(productionNetwork.get(fromElement)){
                     productionNetwork.get(fromElement)?.push(new productionNetworkElement(shape.shapeID,"machine"))
                   }
                   else{
@@ -337,7 +337,8 @@ export class HomeComponent {
                   draw_line = null;
                   document.getElementById("line")!.style.backgroundColor = "transparent";
 
-                  if(productionNetwork.get(fromElement !== undefined){
+                  console.log(fromElement);
+                  if(productionNetwork.get(fromElement)){
                     console.log("lol")
                     productionNetwork.get(fromElement)?.push(new productionNetworkElement(shape.shapeID,"queue"))
   

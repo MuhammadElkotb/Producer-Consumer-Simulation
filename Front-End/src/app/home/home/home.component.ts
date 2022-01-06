@@ -14,29 +14,30 @@ let machineArea = new Map<string, Path2D>();
 let queueArea = new Map<string, Path2D>();
 let productionNetwork = new Map<productionNetworkElement,productionNetworkElement[]>();
 
-
 //----------------------------------------------------------------------//
 
 //flag to activate buttons
 
-var draw_line : shapeBack|null = null;
+var draw_line : shapeBack = null;
 
 //----------------------------------------------------------------------//
 
 //flag to activate buttons of creation
-var create_line_flag : boolean = false;
-var created_line : boolean = false;
+var createLineFlag : boolean = false;
+var createdLine : boolean = false;
 
-var create_circle_flag : boolean = false;
-var created_circle : boolean = false;
+var createMachineFlag : boolean = false;
+var createdMachine : boolean = false;
 
-var create_rect_flag : boolean = false;
-var created_rect : boolean = false;
+var createQueueFlag : boolean = false;
+var createdQueue : boolean = false;
 
-var circleButtonFlag : boolean = false;
-var rectButtonFlag : boolean = false;
+var machineButtonFlag : boolean = false;
+var queueButtonFlag : boolean = false;
 var lineButtonFlag : boolean = false;
 
+
+var tempType : string = "";
 
 //----------------------------------------------------------------------//
 
@@ -45,7 +46,6 @@ var strokeColor:string = 'black';
 var strokeWidth:number = 3;
 
 //----------------------------------------------------------------------//
-
 // array for ID generator
 var serial = Array.from(Array(1000000).keys());
 
@@ -83,16 +83,10 @@ export interface shapeBack{
 export class HomeComponent {
 
   title = 'Front-End';
-
   constructor() {}
 
 
-
-//----------------------------------------------------------------------//
-
-
-
-  drawShape(shape : shapeBack, fillcolor : string){
+  placeElement(shape : shapeBack, fillcolor : string){
     var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
     var canvasGlobal = boardGlobal.getContext("2d")!;
 
@@ -109,7 +103,7 @@ export class HomeComponent {
 
     var area:Path2D|null = new Path2D();
     switch(type){
-      case "circle":
+      case "machine":
         if(fillcolor != ""){
           shape.fiCo = fillcolor
           fiCo = fillcolor;
@@ -135,7 +129,7 @@ export class HomeComponent {
         machineArea.set(ID, area);
         area = null;
         break;
-      case "rect" :
+      case "queue" :
         if(fillcolor != ""){
           shape.fiCo = fillcolor
           fiCo = fillcolor;
@@ -186,8 +180,6 @@ export class HomeComponent {
           canvasGlobal.fill();
           canvasGlobal.closePath();
 
-
-          area = null;
           break;
         default:
           break;
@@ -208,21 +200,26 @@ export class HomeComponent {
 
 //----------------------------------------------------------------------//
     createLine(){
-      create_circle_flag = false;
-      create_rect_flag = false;
-      created_circle = false;
-      created_rect = false;
+      createMachineFlag = false;
+      createQueueFlag = false;
+
+      createdMachine = false;
+      createdQueue = false;
+
       var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
       var canvasGlobal = boardGlobal.getContext("2d")!;
 
-      create_line_flag = true;
-      created_line = false;
+
+
+      createLineFlag = true;
+      createdLine = false;
+
       var fromElement:productionNetworkElement;
       var selectLine = false;
       boardGlobal.addEventListener("mousedown",e=>{
-        if(!created_line &&  lineButtonFlag ){
+        if(!createdLine &&  lineButtonFlag ){
           for(var shape of shapesBack){
-              if(shape.type == "circle"){
+              if(shape.type == "machine"){
                 if(canvasGlobal.isPointInPath( machineArea.get(shape.shapeID),e.offsetX,e.offsetY)){
                   draw_line={
                     x : e.offsetX,
@@ -237,12 +234,14 @@ export class HomeComponent {
                     shapeID : get_new_ID()
                     }
                     selectLine = true;
-                    created_line = true
-                    fromElement = new productionNetworkElement(shape.shapeID,"circle")
+                    createdLine = true
+                    tempType = "machine";
+                    fromElement = new productionNetworkElement(shape.shapeID,"machine");
 
                 }
-              }else if(shape.type == "rect"){
+              }else if(shape.type == "queue"){
                 if(canvasGlobal.isPointInPath( queueArea.get(shape.shapeID),e.offsetX,e.offsetY)){
+                  console.log("INSIDE IF MOUSE DOWN");
                   draw_line={
                     x : e.offsetX,
                     y :e.offsetY,
@@ -256,29 +255,26 @@ export class HomeComponent {
                     shapeID : get_new_ID()
                     }
                     selectLine = true;
-                    created_line = true
-                    fromElement = new productionNetworkElement(shape.shapeID,"rect")
+                    createdLine = true
+                    tempType = "queue";
+                    fromElement = new productionNetworkElement(shape.shapeID,"queue")
 
                 }
               }
-
           }
         }
-
-
-
       });
 
       boardGlobal.addEventListener("mousemove", e => {
-        if(create_line_flag && selectLine && (draw_line != null) && lineButtonFlag && created_line){
+        if(createLineFlag && selectLine && (draw_line != null) && lineButtonFlag && createdLine){
           canvasGlobal.clearRect(0,0,1380,675);
 
           draw_line.width = e.offsetX;
           draw_line.height = e.offsetY;
 
-          this.drawShape(draw_line, "");
+          this.placeElement(draw_line, "");
           for(var i = 0; i < shapesBack.length; i++){
-            this.drawShape(shapesBack[i], "");
+            this.placeElement(shapesBack[i], "");
           }
         }
 
@@ -286,176 +282,230 @@ export class HomeComponent {
       boardGlobal.addEventListener("mouseup", e => {
         if(lineButtonFlag && fromElement != null){
           for(var shape of shapesBack){
-            if(shape.type == "circle"){
-              if(canvasGlobal.isPointInPath( machineArea.get(shape.shapeID),e.offsetX,e.offsetY)){
-                create_line_flag =false;
-                created_line = true;
-                selectLine = false;
-                if(draw_line != null && (draw_line.width != 0 && draw_line.height != 0)){
-                  this.drawShape(draw_line, "");
-                  shapesBack.push(draw_line);
-                }
-                draw_line = null;
-                document.getElementById("line")!.style.backgroundColor = "transparent"
-                if(productionNetwork.get(fromElement) !== undefined){
-                  productionNetwork.get(fromElement)?.push(new productionNetworkElement(shape.shapeID,"circle"))
-                }else{
-                  productionNetwork.set(fromElement,[new productionNetworkElement(shape.shapeID,"circle")])
-                }
+            switch(tempType.concat(shape.type)){
+              case "queuemachine":
 
-              }
-            }else if(shape.type == "rect"){
-              if(canvasGlobal.isPointInPath( queueArea.get(shape.shapeID),e.offsetX,e.offsetY)){
-                create_line_flag =false;
-                created_line = true;
-                selectLine = false;
-                if(draw_line != null && (draw_line.width != 0 && draw_line.height != 0)){
-                  this.drawShape(draw_line, "");
-                  shapesBack.push(draw_line);
-                }
-                draw_line = null;
-                document.getElementById("line")!.style.backgroundColor = "transparent"
-                if(productionNetwork.get(fromElement) !== undefined){
-                  productionNetwork.get(fromElement)?.push(new productionNetworkElement(shape.shapeID,"rect"))
+                if(canvasGlobal.isPointInPath( machineArea.get(shape.shapeID),e.offsetX,e.offsetY)){
+                  console.log("INSIDE CASE 1");
 
-                }else{
-                  productionNetwork.set(fromElement,[new productionNetworkElement(shape.shapeID,"rect")])
+                  createLineFlag =false;
+                  createdLine = true;
+                  selectLine = false;
+                  lineButtonFlag = false;
+
+                  console.log(draw_line);
+                  if(draw_line != null && (draw_line.width != 0 && draw_line.height != 0)){
+
+                    this.placeElement(draw_line, "");
+                    shapesBack.push(draw_line);
+                  }
+                  draw_line = null;
+                  document.getElementById("line")!.style.backgroundColor = "transparent";
+                  if(productionNetwork.get(fromElement)){
+                    productionNetwork.get(fromElement)?.push(new productionNetworkElement(shape.shapeID,"machine"))
+                  }
+                  else{
+                    productionNetwork.set(fromElement,[new productionNetworkElement(shape.shapeID,"machine")])
+                  }
+                  console.log(productionNetwork);
+                  fromElement = null;
+
                 }
-                fromElement = null;
-                console.log(productionNetwork)
+                break;
+
+
+              case "machinequeue":
+                if(canvasGlobal.isPointInPath( queueArea.get(shape.shapeID),e.offsetX,e.offsetY)){
+                console.log("INSIDE CASE 2");
+
+                  createLineFlag = false;
+                  createdLine = true;
+                  selectLine = false;
+                  lineButtonFlag = false;
+
+                  if(draw_line != null && (draw_line.width != 0 && draw_line.height != 0)){
+                    this.placeElement(draw_line, "");
+                    shapesBack.push(draw_line);
+                  }
+                  draw_line = null;
+                  document.getElementById("line")!.style.backgroundColor = "transparent";
+
+                  console.log(fromElement);
+                  if(productionNetwork.get(fromElement)){
+                    console.log("lol")
+                    productionNetwork.get(fromElement)?.push(new productionNetworkElement(shape.shapeID,"queue"))
+
+                  }else{
+                    productionNetwork.set(fromElement,[new productionNetworkElement(shape.shapeID,"queue")])
+                  }
+                  fromElement = null;
+                  console.log(productionNetwork);
+
+                }
+                break;
+
+
+                default :
+                  canvasGlobal.clearRect(0,0,1380,675);
+                  createLineFlag =false;
+                  createdLine = true;
+                  selectLine = false;
+                  lineButtonFlag = false;
+                  document.getElementById("line")!.style.backgroundColor = "transparent"
+                  for(var i = 0; i < shapesBack.length; i++){
+                    this.placeElement(shapesBack[i], "");
+                  }
+                  break;
+
+
               }
             }
+
           }
-        }
+          draw_line = null;
+
+
+          for(var i = 0; i < shapesBack.length; i++){
+            this.placeElement(shapesBack[i], "");
+          }
+
+        tempType = "";
 
 
       });
 
-      if(create_line_flag){
+      if(createLineFlag){
         document.getElementById("line")!.style.backgroundColor = "rgba(58, 57, 57, 0.856)"
 
       }
 
-
     }
+
+
+
+
 
 //----------------------------------------------------------------------//
 
-  createCircle(){
-    create_line_flag = false;
-    create_rect_flag = false;
+  createMachine(){
+    createLineFlag = false;
+    createQueueFlag = false;
 
-    created_line = false;
-    created_rect = false;
+    createdLine = false;
+    createdQueue = false;
 
 
-    create_circle_flag = true;
-    created_circle = false;
+    createMachineFlag = true;
+    createdMachine = false;
 
 
     var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
     var canvasGlobal = boardGlobal.getContext("2d")!;
 
-    var circle : shapeBack;
+    var machine : shapeBack;
 
     boardGlobal.addEventListener("mousedown", e=> {
 
-      if(!created_circle  && circleButtonFlag){
+      if(!createdMachine && machineButtonFlag){
 
-        circle={
+        machine={
           x : e.offsetX,
           y : e.offsetY,
           width : 60,
           height : 60,
           stCo : "white",
+          type : "machine",
           fiCo : "darkred",
-          type : "circle",
           is_filled : 1,
           stWi : 2,
           shapeID : get_new_ID()
           }
-        create_circle_flag = false;
-        created_circle = true;
-        console.log(circle);
-        this.drawShape(circle, "");
-        shapesBack.push(circle);
+        createMachineFlag = false;
+        createdMachine = true;
+        console.log(machine);
+        this.placeElement(machine, "");
+        shapesBack.push(machine);
         }
 
     });
 
 
     boardGlobal.addEventListener("mouseup",e=>{
-      if(circleButtonFlag){
-        created_circle = true;
-        create_circle_flag = false;
-        circle = null;
+      if(machineButtonFlag){
+        createdMachine = true;
+        createMachineFlag = false;
+        machine = null;
 
-        document.getElementById("circle")!.style.backgroundColor = "transparent"
+        document.getElementById("machine")!.style.backgroundColor = "transparent"
+
 
       }
 
     });
-    if(create_circle_flag){
-      document.getElementById("circle")!.style.backgroundColor = "rgba(58, 57, 57, 0.856)"
+    if(createMachineFlag){
+      document.getElementById("machine")!.style.backgroundColor = "rgba(58, 57, 57, 0.856)"
 
     }
 }
 
 //----------------------------------------------------------------------//
 
-  createRect(){
-    create_line_flag = false;
-    create_circle_flag = false;
+  createQueue(){
+    createLineFlag = false;
+    createMachineFlag = false;
 
-    created_line = false;
-    created_circle = false;
+    createdLine = false;
+    createdMachine = false;
 
 
-    create_rect_flag = true;
-    created_rect = false;
+    createQueueFlag = true;
+    createdQueue = false;
 
 
     var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
     var canvasGlobal = boardGlobal.getContext("2d")!;
 
-    var rect : shapeBack;
+    var queue : shapeBack;
 
     boardGlobal.addEventListener("mousedown",e=>{
 
-      if(!created_rect && rectButtonFlag){
+      if(!createdQueue && queueButtonFlag){
 
-        rect={
+        queue={
           x : e.offsetX,
           y :e.offsetY,
           width : 90,
           height : 50,
           stCo : "white",
           fiCo : "darkgreen",
-          type : "rect",
+          type : "queue",
           is_filled : 1,
           stWi : 2,
           shapeID : get_new_ID()
           }
-          create_rect_flag =false;
-          created_rect = true;
-          this.drawShape(rect, "");
-          shapesBack.push(rect);
+          createQueueFlag =false;
+          createdQueue = true;
+          this.placeElement(queue, "");
+          shapesBack.push(queue);
         }
 
     });
 
 
     boardGlobal.addEventListener("mouseup",e=>{
-      if(rectButtonFlag){
-        created_rect = true;
-        create_rect_flag = false;
-        rect = null;
-        document.getElementById("rect")!.style.backgroundColor = "transparent"
+      if(queueButtonFlag){
+        createdQueue = true;
+        createQueueFlag = false;
+        queue = null;
+
+
+        document.getElementById("queue")!.style.backgroundColor = "transparent"
+
       }
 
     });
-    if(create_rect_flag){
-      document.getElementById("rect")!.style.backgroundColor = "rgba(58, 57, 57, 0.856)"
+    if(createQueueFlag){
+      document.getElementById("queue")!.style.backgroundColor = "rgba(58, 57, 57, 0.856)"
 
     }
   }
@@ -466,48 +516,55 @@ export class HomeComponent {
   clearAll(){
     var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
     var canvasGlobal = boardGlobal.getContext("2d")!;
-    canvasGlobal.clearRect(0,0,1380,675)
-    machineArea.clear()
-    queueArea.clear()
+    canvasGlobal.clearRect(0,0,1380,675);
+    machineArea.clear();
+    queueArea.clear();
     shapesBack = []
   }
 
   //----------------------------------------------------------------------//
 
   disableButtons(){
-    if(create_line_flag){
-      circleButtonFlag = false;
-      rectButtonFlag  = false;
+    if(createLineFlag){
+
+      machineButtonFlag = false;
+      queueButtonFlag  = false;
 
 
       lineButtonFlag = true;
+
+
     }
 
-    if(create_circle_flag){
+    if(createMachineFlag){
 
 
 
-      rectButtonFlag = false;
+      queueButtonFlag = false;
       lineButtonFlag = false;
-      circleButtonFlag = true;
+      machineButtonFlag = true;
+
       draw_line = null;
     }
-    if(create_rect_flag){
-      circleButtonFlag  = false;
+    if(createQueueFlag){
+
+      machineButtonFlag  = false;
       lineButtonFlag = false;
-      rectButtonFlag = true;
+
+      queueButtonFlag = true;
       draw_line = null;
     }
 
-    if(!create_rect_flag){
-      document.getElementById("rect")!.style.backgroundColor = "transparent"
+
+    if(!createQueueFlag){
+      document.getElementById("queue")!.style.backgroundColor = "transparent"
 
     }
-    if(!create_circle_flag){
-      document.getElementById("circle")!.style.backgroundColor = "transparent"
+    if(!createMachineFlag){
+      document.getElementById("machine")!.style.backgroundColor = "transparent"
 
     }
-    if(!create_line_flag){
+    if(!createLineFlag){
       document.getElementById("line")!.style.backgroundColor = "transparent"
 
     }
@@ -519,4 +576,3 @@ export class HomeComponent {
 
 }
 //----------------------------------------------------------------------//
-

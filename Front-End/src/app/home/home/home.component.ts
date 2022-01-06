@@ -14,16 +14,7 @@ let canvasArea = new Map<string, Path2D>();
 //----------------------------------------------------------------------//
 
 //flag to activate buttons
-var remove_flag :boolean = false;
-var move_flag :boolean = false;
-var resize_flag :boolean = false;
-var fill_flag :boolean = false;
-var copy_flag : boolean = false;
-var undo_flag : boolean = false;
-var redo_flag : boolean = false;
-var found_move : boolean = false;
-var found_copy : boolean = false;
-var found_resize : boolean = false;
+
 var draw_line : shapeBack|null = null;
 
 //----------------------------------------------------------------------//
@@ -38,26 +29,11 @@ var created_circle : boolean = false;
 var create_rect_flag : boolean = false;
 var created_rect : boolean = false;
 
-var create_square_flag : boolean = false;
-var created_square : boolean = false;
-
-var create_ellipse_flag : boolean = false;
-var created_ellipse : boolean = false;
-
-var create_triangle_flag : boolean = false;
-var created_triangle : boolean = false;
-
 var circleButtonFlag : boolean = false;
 var squareButtonFlag : boolean = false;
 var rectButtonFlag : boolean = false;
 var lineButtonFlag : boolean = false;
-var triangleButtonFlag : boolean = false;
-var ellipseButtonFlag : boolean = false;
 
-var removeButtonFlag : boolean = false;
-var moveButtonFlag : boolean = false;
-var copyButtonFlag : boolean = false;
-var resizeButtonFlag : boolean = false;
 
 //----------------------------------------------------------------------//
 
@@ -110,6 +86,8 @@ export class HomeComponent {
 
 
 //----------------------------------------------------------------------//
+
+
 
   drawShape(shape : shapeBack, fillcolor : string){
     var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
@@ -181,8 +159,9 @@ export class HomeComponent {
         area = null;
         break;
         case "line":
+          
           area.moveTo(x, y);
-          area.lineTo(width,  height);
+          area.lineTo(width, height);
           area.closePath;
           canvasGlobal.beginPath();
           canvasGlobal.strokeStyle = stCo;
@@ -191,6 +170,18 @@ export class HomeComponent {
           canvasGlobal.lineTo(width, height);
           canvasGlobal.closePath();
           canvasGlobal.stroke();
+          var angle=Math.PI+Math.atan2(height-y,width-x);
+          var angle1=angle+Math.PI/6;
+          var angle2=angle-Math.PI/6;
+          canvasGlobal.beginPath();
+          canvasGlobal.strokeStyle = stCo;
+          canvasGlobal.lineWidth = stWi; 
+          canvasGlobal.moveTo(width,height);
+          canvasGlobal.arc(width,height,20,angle1,angle2,true);
+          canvasGlobal.lineTo(width,height);
+          canvasGlobal.fill();
+          canvasGlobal.closePath();
+          
 
           canvasArea.set(ID, area);
           area = null;
@@ -244,7 +235,7 @@ export class HomeComponent {
           fiCo : "black",
           type : "line",
           is_filled : 1,
-          stWi : 2,
+          stWi : 1,
           shapeID : get_new_ID()
           }
           selectLine = true;
@@ -376,7 +367,7 @@ export class HomeComponent {
     var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
     var canvasGlobal = boardGlobal.getContext("2d")!;
 
-    var rect : shapeBack|null;
+    var rect : shapeBack;
 
     boardGlobal.addEventListener("mousedown",e=>{
 
@@ -389,7 +380,7 @@ export class HomeComponent {
           height : 30,
           stCo : "white",
           fiCo : "yellow",
-          type : "circle",
+          type : "rect",
           is_filled : 1,
           stWi : 2,
           shapeID : get_new_ID()
@@ -398,10 +389,6 @@ export class HomeComponent {
           created_rect = true;
           this.drawShape(rect, "");
           shapesBack.push(rect);
-
-
-
-
         }
 
     });

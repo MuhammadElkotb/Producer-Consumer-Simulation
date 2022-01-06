@@ -315,9 +315,7 @@ export class HomeComponent {
                 }
                 draw_line = null;
                 document.getElementById("line")!.style.backgroundColor = "transparent"
-                console.log(productionNetwork.get(fromElement))
                 if(productionNetwork.get(fromElement) !== undefined){
-                  console.log("lol")
                   productionNetwork.get(fromElement)?.push(new productionNetworkElement(shape.shapeID,"rect"))
 
                 }else{

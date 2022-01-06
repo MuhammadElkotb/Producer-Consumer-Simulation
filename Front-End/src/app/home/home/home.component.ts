@@ -215,34 +215,19 @@ export class HomeComponent {
 //----------------------------------------------------------------------//
     createLine(){
       create_circle_flag = false;
-      create_square_flag = false;
       create_rect_flag = false;
-      create_triangle_flag = false;
-      create_ellipse_flag = false;
       created_circle = false;
-      created_square = false;
       created_rect = false;
-      created_triangle = false;
-      created_ellipse = false;
-      move_flag = false;
-      copy_flag = false;
-      remove_flag = false;
-      resize_flag = false;
       var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
       var canvasGlobal = boardGlobal.getContext("2d")!;
-
-
 
       create_line_flag = true;
       created_line = false;
 
-
-
-
       var selectLine = false;
       boardGlobal.addEventListener("mousedown",e=>{
 
-        if(!created_line && (draw_line != null) && lineButtonFlag){
+        if(!created_line &&  lineButtonFlag){
           draw_line={
           x : e.offsetX,
           y :e.offsetY,
@@ -291,13 +276,13 @@ export class HomeComponent {
 
         draw_line = null;
 
-        document.getElementById("line")!.style.backgroundColor = "rgb(246, 129, 60)"
+        document.getElementById("line")!.style.backgroundColor = "transparent"
         }
 
       });
 
       if(create_line_flag){
-        document.getElementById("line")!.style.backgroundColor = "rgba(47, 24, 10, 0.856)"
+        document.getElementById("line")!.style.backgroundColor = "rgba(58, 57, 57, 0.856)"
 
       }
 
@@ -307,22 +292,12 @@ export class HomeComponent {
 //----------------------------------------------------------------------//
 
   createCircle(){
-    create_square_flag = false;
     create_line_flag = false;
     create_rect_flag = false;
-    create_triangle_flag = false;
-    create_ellipse_flag = false;
 
-    created_square = false;
     created_line = false;
     created_rect = false;
-    created_triangle = false;
-    created_ellipse = false;
 
-    move_flag = false;
-    copy_flag = false;
-    remove_flag = false;
-    resize_flag = false;
 
     create_circle_flag = true;
     created_circle = false;
@@ -335,7 +310,7 @@ export class HomeComponent {
 
     boardGlobal.addEventListener("mousedown", e=> {
 
-      if(!created_circle && (circle != null) && circleButtonFlag){
+      if(!created_circle  && circleButtonFlag){
 
         circle={
           x : e.offsetX,
@@ -365,13 +340,13 @@ export class HomeComponent {
         create_circle_flag = false;
         circle = null;
 
-        document.getElementById("circle")!.style.backgroundColor = "rgb(246, 129, 60)"
+        document.getElementById("circle")!.style.backgroundColor = "transparent"
 
       }
 
     });
     if(create_circle_flag){
-      document.getElementById("circle")!.style.backgroundColor = "rgba(47, 24, 10, 0.856)"
+      document.getElementById("circle")!.style.backgroundColor = "rgba(58, 57, 57, 0.856)"
 
     }
 }
@@ -379,22 +354,12 @@ export class HomeComponent {
 //----------------------------------------------------------------------//
 
   createRect(){
-    create_square_flag = false;
     create_line_flag = false;
     create_circle_flag = false;
-    create_triangle_flag = false;
-    create_ellipse_flag = false;
 
-    created_square = false;
     created_line = false;
     created_circle = false;
-    created_triangle = false;
-    created_ellipse = false;
 
-    move_flag = false;
-    copy_flag = false;
-    remove_flag = false;
-    resize_flag = false;
 
     create_rect_flag = true;
     created_rect = false;
@@ -407,7 +372,7 @@ export class HomeComponent {
 
     boardGlobal.addEventListener("mousedown",e=>{
 
-      if(!created_rect && (rect != null) && rectButtonFlag){
+      if(!created_rect && rectButtonFlag){
 
         rect={
           x : e.offsetX,
@@ -416,7 +381,7 @@ export class HomeComponent {
           height : 30,
           stCo : "white",
           fiCo : "yellow",
-          type : "circle",
+          type : "rect",
           is_filled : 1,
           stWi : 2,
           shapeID : get_new_ID()
@@ -439,14 +404,12 @@ export class HomeComponent {
         created_rect = true;
         create_rect_flag = false;
         rect = null;
-
-        document.getElementById("rect")!.style.backgroundColor = "rgb(246, 129, 60)"
-
+        document.getElementById("rect")!.style.backgroundColor = "transparent"
       }
 
     });
     if(create_rect_flag){
-      document.getElementById("rect")!.style.backgroundColor = "rgba(47, 24, 10, 0.856)"
+      document.getElementById("rect")!.style.backgroundColor = "rgba(58, 57, 57, 0.856)"
 
     }
   }
@@ -466,232 +429,37 @@ export class HomeComponent {
 
   disableButtons(){
     if(create_line_flag){
-
       circleButtonFlag = false;
-      squareButtonFlag  = false;
       rectButtonFlag  = false;
-      triangleButtonFlag  = false;
-      ellipseButtonFlag  = false;
-
-      moveButtonFlag = false;
-      resizeButtonFlag = false;
-      copyButtonFlag = false;
-      removeButtonFlag = false;
-
       lineButtonFlag = true;
-
-
-
     }
-    if(create_square_flag){
 
-      circleButtonFlag = false;
-      rectButtonFlag  = false;
-      lineButtonFlag  = false;
-      triangleButtonFlag  = false;
-      ellipseButtonFlag  = false;
-
-      moveButtonFlag = false;
-      resizeButtonFlag = false;
-      copyButtonFlag = false;
-      removeButtonFlag = false;
-
-      squareButtonFlag = true;
-      draw_line = null;
-
-    }
     if(create_circle_flag){
-
-
-
-      squareButtonFlag = false;
       rectButtonFlag = false;
       lineButtonFlag = false;
-      triangleButtonFlag = false;
-      ellipseButtonFlag = false;
-      moveButtonFlag = false;
-      resizeButtonFlag = false;
-      copyButtonFlag = false;
-      removeButtonFlag = false;
-
       circleButtonFlag = true;
-
       draw_line = null;
-
-
     }
     if(create_rect_flag){
-
       circleButtonFlag  = false;
-      squareButtonFlag = false;
       lineButtonFlag = false;
-      triangleButtonFlag = false;
-      ellipseButtonFlag = false;
-      moveButtonFlag = false;
-      resizeButtonFlag = false;
-      copyButtonFlag = false;
-      removeButtonFlag = false;
-
       rectButtonFlag = true;
       draw_line = null;
-
-
-    }
-    if(create_triangle_flag){
-
-      circleButtonFlag = false;
-      squareButtonFlag = false;
-      rectButtonFlag  = false;
-      lineButtonFlag = false;
-      ellipseButtonFlag = false;
-      moveButtonFlag = false;
-      resizeButtonFlag = false;
-      copyButtonFlag = false;
-      removeButtonFlag = false;
-
-      triangleButtonFlag = true;
-      draw_line = null;
-
-
-
-    }
-    if(create_ellipse_flag){
-
-
-      circleButtonFlag = false;
-      squareButtonFlag = false;
-      rectButtonFlag = false;
-      lineButtonFlag = false;
-      triangleButtonFlag = false;
-
-      moveButtonFlag = false;
-      resizeButtonFlag = false;
-      copyButtonFlag = false;
-      removeButtonFlag = false;
-
-      draw_line = null;
-
-
-
-      ellipseButtonFlag = true;
-
     }
 
-    if(move_flag){
-      circleButtonFlag = false;
-      squareButtonFlag = false;
-      rectButtonFlag = false;
-      lineButtonFlag = false;
-      triangleButtonFlag = false;
-      ellipseButtonFlag = false;
-
-      draw_line = null;
-
-      removeButtonFlag = false;
-      resizeButtonFlag = false;
-      copyButtonFlag = false;
-
-      moveButtonFlag = true;
-
-
-
-      ellipseButtonFlag = true;
-    }
-    if(remove_flag){
-      circleButtonFlag = false;
-      squareButtonFlag = false;
-      rectButtonFlag = false;
-      lineButtonFlag = false;
-      triangleButtonFlag = false;
-      ellipseButtonFlag = false;
-
-      draw_line = null;
-      moveButtonFlag = false;
-      resizeButtonFlag = false;
-      copyButtonFlag = false;
-
-
-      removeButtonFlag = true;
-
-
-    }
-    if(copy_flag){
-      circleButtonFlag = false;
-      squareButtonFlag = false;
-      rectButtonFlag = false;
-      lineButtonFlag = false;
-      triangleButtonFlag = false;
-      ellipseButtonFlag = false;
-      draw_line = null;
-
-      moveButtonFlag = false;
-      resizeButtonFlag = false;
-      removeButtonFlag = false;
-
-      copyButtonFlag = true;
-
-
-
-    }
-    if(resize_flag){
-      circleButtonFlag = false;
-      squareButtonFlag = false;
-      rectButtonFlag = false;
-      lineButtonFlag = false;
-      triangleButtonFlag = false;
-      ellipseButtonFlag = false;
-
-      moveButtonFlag = false;
-      copyButtonFlag = false;
-      removeButtonFlag = false;
-
-      draw_line = null;
-
-      resizeButtonFlag = true;
-
-
-    }
-
-    if(!create_square_flag){
-      document.getElementById("square")!.style.backgroundColor = "rgb(246, 129, 60)"
-
-    }
     if(!create_rect_flag){
-      document.getElementById("rect")!.style.backgroundColor = "rgb(246, 129, 60)"
+      document.getElementById("rect")!.style.backgroundColor = "transparent"
 
     }
     if(!create_circle_flag){
-      document.getElementById("circle")!.style.backgroundColor = "rgb(246, 129, 60)"
+      document.getElementById("circle")!.style.backgroundColor = "transparent"
 
     }
     if(!create_line_flag){
-      document.getElementById("line")!.style.backgroundColor = "rgb(246, 129, 60)"
+      document.getElementById("line")!.style.backgroundColor = "transparent"
 
     }
-    if(!create_ellipse_flag){
-      document.getElementById("ellipse")!.style.backgroundColor = "rgb(246, 129, 60)"
 
-    }
-    if(!create_triangle_flag){
-      document.getElementById("triangle")!.style.backgroundColor = "rgb(246, 129, 60)"
-
-    }
-    if(!move_flag){
-      document.getElementById("move")!.style.backgroundColor = "rgb(246, 129, 60)"
-
-    }
-    if(!copy_flag){
-      document.getElementById("copy")!.style.backgroundColor = "rgb(246, 129, 60)"
-
-    }
-    if(!resize_flag){
-      document.getElementById("resize")!.style.backgroundColor = "rgb(246, 129, 60)"
-
-    }
-    if(!remove_flag){
-      document.getElementById("remove")!.style.backgroundColor = "rgb(246, 129, 60)"
-
-    }
 
   }
 

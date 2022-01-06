@@ -1,19 +1,21 @@
+<div class="body">
+  <div class="vtool_bar">
+    <div>
+    <button id="circle" value="circle" (click)="createCircle();disableButtons()"> <img src= "assets/icons/queue.png" width = 45px length = 45px /></button>
+    </div>
+    <div>
+      <button id="rect" value="rect" (click)="createRect();disableButtons()"><img src= "assets/icons/machine.png" width = 45px length = 45px /></button>
+    </div>
+    <div>
+      <button id="line" value="line" (click) = "createLine();disableButtons()"> <img src= "assets/icons/direction.png" width = 45px length = 45px /> </button>
+    </div>
+    <div>
+      <button type="button" id="clear" value="clear" (click)="clearAll()" > <img src= "assets/icons/eraser-icon.png" width = 35px length = 35px /> </button>
+    </div>
+  </div>
 
-<div class="vtool_bar">
-  <div>
-  <button id="circle" value="circle" (click)="createCircle();disableButtons()"> <img src= "assets/icons/circle-icon.png" width = 45px length = 45px /></button>
-  </div>
-  <div>
-    <button id="rect" value="rect" (click)="createRect();disableButtons()"><img src= "assets/icons/rectangle-icon.png" width = 45px length = 45px /></button>
-  </div>
-  <div>
-    <button id="line" value="line" (click) = "createLine();disableButtons()"> <img src= "assets/icons/line-icon.png" width = 45px length = 45px /> </button>
-  </div>
-  <div>
-    <button type="button" id="clear" value="clear" (click)="clearAll()" > <img src= "assets/icons/eraser-icon.png" width = 35px length = 35px /> </button>
-  </div>
+
+  <canvas id="board" width="1355" height="600" style="border:3px solid #868380"></canvas>
+
 </div>
-
-
-<canvas id="board" width="1355" height="600" style="border:3px solid #868380"></canvas>
 

@@ -106,7 +106,7 @@ export class HomeComponent {
 
     var area:Path2D|null = new Path2D();
     switch(type){
-      case "mahine":
+      case "machine":
         if(fillcolor != ""){
           shape.fiCo = fillcolor
           fiCo = fillcolor;
@@ -159,7 +159,7 @@ export class HomeComponent {
         area = null;
         break;
         case "line":
-          
+
           area.moveTo(x, y);
           area.lineTo(width, height);
           area.closePath;
@@ -175,7 +175,8 @@ export class HomeComponent {
           var angle2=angle-Math.PI/6;
           canvasGlobal.beginPath();
           canvasGlobal.strokeStyle = stCo;
-          canvasGlobal.lineWidth = stWi; 
+          canvasGlobal.lineWidth = stWi;
+          canvasGlobal.fillStyle = "white"
           canvasGlobal.moveTo(width,height);
           canvasGlobal.arc(width,height,20,angle1,angle2,true);
           canvasGlobal.lineTo(width,height);
@@ -216,28 +217,51 @@ export class HomeComponent {
       createLineFlag = true;
       createdLine = false;
 
-
-
-
       var selectLine = false;
+      var tempType : string;
       boardGlobal.addEventListener("mousedown",e=>{
+        if(!createdLine &&  lineButtonFlag ){
+          for(var shape of shapesBack){
+              if(shape.type == "machine"){
+                if(canvasGlobal.isPointInPath( machineArea.get(shape.shapeID),e.offsetX,e.offsetY)){
+                  draw_line={
+                    x : e.offsetX,
+                    y :e.offsetY,
+                    width : 0,
+                    height : 0,
+                    stCo : "white",
+                    fiCo : "black",
+                    type : "line",
+                    is_filled : 1,
+                    stWi : 1,
+                    shapeID : get_new_ID()
+                    }
+                    selectLine = true;
+                    createdLine = true
+                }
+              }else if(shape.type == "queue"){
+                if(canvasGlobal.isPointInPath( queueArea.get(shape.shapeID),e.offsetX,e.offsetY)){
+                  draw_line={
+                    x : e.offsetX,
+                    y :e.offsetY,
+                    width : 0,
+                    height : 0,
+                    stCo : "white",
+                    fiCo : "black",
+                    type : "line",
+                    is_filled : 1,
+                    stWi : 1,
+                    shapeID : get_new_ID()
+                    }
+                    selectLine = true;
+                    createdLine = true
+                }
+              }
 
-        if(!createdLine && lineButtonFlag){
-          draw_line={
-          x : e.offsetX,
-          y :e.offsetY,
-          width : 0,
-          height : 0,
-          stCo : "white",
-          fiCo : "black",
-          type : "line",
-          is_filled : 1,
-          stWi : 1,
-          shapeID : get_new_ID()
+              tempType = shape.type;
           }
-          selectLine = true;
-          createdLine = true
         }
+
 
 
       });
@@ -258,25 +282,54 @@ export class HomeComponent {
       });
       boardGlobal.addEventListener("mouseup", e => {
         if(lineButtonFlag){
-          createLineFlag =false;
-          createdLine = true;
-          selectLine = false;
-        if(draw_line != null && (draw_line.width != 0 && draw_line.height != 0)){
+          for(var shape of shapesBack){
+            if(shape.type == "machine" && shape.type != tempType){
+              if(canvasGlobal.isPointInPath( machineArea.get(shape.shapeID),e.offsetX,e.offsetY)){
+                createLineFlag =false;
+                createdLine = true;
+                selectLine = false;
+                if(draw_line != null && (draw_line.width != 0 && draw_line.height != 0)){
+                  this.placeElement(draw_line, "");
+                  shapesBack.push(draw_line);
+                }
+                draw_line = null;
+                document.getElementById("line")!.style.backgroundColor = "transparent"
+              }
+            }else if(shape.type == "queue" && shape.type != tempType){
+              if(canvasGlobal.isPointInPath( queueArea.get(shape.shapeID),e.offsetX,e.offsetY)){
+                createLineFlag =false;
+                createdLine = true;
+                selectLine = false;
+                if(draw_line != null && (draw_line.width != 0 && draw_line.height != 0)){
+                  this.placeElement(draw_line, "");
+                  shapesBack.push(draw_line);
+                }
+                draw_line = null;
+                document.getElementById("line")!.style.backgroundColor = "transparent"
+              }
+            }
+            else {
+              selectLine = false;
+              createLineFlag = false;
+              lineButtonFlag = false;
+              createdLine = false;
+              draw_line = null;
+              canvasGlobal.clearRect(0,0,1380,675);
 
-            this.placeElement(draw_line, "");
-            shapesBack.push(draw_line);
+    
+              for(var i = 0; i < shapesBack.length; i++){
+                this.placeElement(shapesBack[i], "");
+              }
 
+            }
+          }
         }
 
-        draw_line = null;
-
-        document.getElementById("line")!.style.backgroundColor = "rgb(246, 129, 60)"
-        }
 
       });
 
       if(createLineFlag){
-        document.getElementById("line")!.style.backgroundColor = "rgba(47, 24, 10, 0.856)"
+        document.getElementById("line")!.style.backgroundColor = "rgba(58, 57, 57, 0.856)"
 
       }
 
@@ -312,8 +365,8 @@ export class HomeComponent {
           width : 60,
           height : 60,
           stCo : "white",
-          fiCo : "red",
           type : "machine",
+          fiCo : "darkred",
           is_filled : 1,
           stWi : 2,
           shapeID : get_new_ID()
@@ -334,13 +387,13 @@ export class HomeComponent {
         createMachineFlag = false;
         machine = null;
 
-        document.getElementById("machine")!.style.backgroundColor = "rgb(246, 129, 60)"
+        document.getElementById("machine")!.style.backgroundColor = "transparent"
 
       }
 
     });
     if(createMachineFlag){
-      document.getElementById("machine")!.style.backgroundColor = "rgba(47, 24, 10, 0.856)"
+      document.getElementById("machine")!.style.backgroundColor = "rgba(58, 57, 57, 0.856)"
 
     }
 }
@@ -354,7 +407,6 @@ export class HomeComponent {
     createdLine = false;
     createdMachine = false;
 
-    
 
     createQueueFlag = true;
     createdQueue = false;
@@ -372,10 +424,10 @@ export class HomeComponent {
         queue={
           x : e.offsetX,
           y :e.offsetY,
-          width : 60,
-          height : 30,
+          width : 90,
+          height : 50,
           stCo : "white",
-          fiCo : "yellow",
+          fiCo : "darkgreen",
           type : "queue",
           is_filled : 1,
           stWi : 2,
@@ -396,13 +448,13 @@ export class HomeComponent {
         createQueueFlag = false;
         queue = null;
 
-        document.getElementById("queue")!.style.backgroundColor = "rgb(246, 129, 60)"
+        document.getElementById("queue")!.style.backgroundColor = "transparent"
 
       }
 
     });
     if(createQueueFlag){
-      document.getElementById("queue")!.style.backgroundColor = "rgba(47, 24, 10, 0.856)"
+      document.getElementById("queue")!.style.backgroundColor = "rgba(58, 57, 57, 0.856)"
 
     }
   }
@@ -442,8 +494,6 @@ export class HomeComponent {
       machineButtonFlag = true;
 
       draw_line = null;
-
-
     }
     if(createQueueFlag){
 
@@ -452,25 +502,22 @@ export class HomeComponent {
 
       queueButtonFlag = true;
       draw_line = null;
-
-
     }
-    
 
    
     if(!createQueueFlag){
-      document.getElementById("queue")!.style.backgroundColor = "rgb(246, 129, 60)"
+      document.getElementById("queue")!.style.backgroundColor = "transparent"
 
     }
     if(!createMachineFlag){
-      document.getElementById("machine")!.style.backgroundColor = "rgb(246, 129, 60)"
+      document.getElementById("machine")!.style.backgroundColor = "transparent"
 
     }
     if(!createLineFlag){
-      document.getElementById("line")!.style.backgroundColor = "rgb(246, 129, 60)"
+      document.getElementById("line")!.style.backgroundColor = "transparent"
 
     }
-   
+
 
   }
 

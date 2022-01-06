@@ -217,7 +217,7 @@ export class HomeComponent {
 
       create_line_flag = true;
       created_line = false;
-
+      var fromElement:productionNetworkElement;
       var selectLine = false;
       boardGlobal.addEventListener("mousedown",e=>{
         if(!created_line &&  lineButtonFlag ){
@@ -238,7 +238,7 @@ export class HomeComponent {
                     }
                     selectLine = true;
                     created_line = true
-
+                    fromElement = new productionNetworkElement(shape.shapeID,"circle")
 
                 }
               }else if(shape.type == "rect"){
@@ -257,6 +257,8 @@ export class HomeComponent {
                     }
                     selectLine = true;
                     created_line = true
+                    fromElement = new productionNetworkElement(shape.shapeID,"rect")
+
                 }
               }
 
@@ -282,7 +284,7 @@ export class HomeComponent {
 
       });
       boardGlobal.addEventListener("mouseup", e => {
-        if(lineButtonFlag){
+        if(lineButtonFlag && fromElement != null){
           for(var shape of shapesBack){
             if(shape.type == "circle"){
               if(canvasGlobal.isPointInPath( machineArea.get(shape.shapeID),e.offsetX,e.offsetY)){
@@ -295,6 +297,12 @@ export class HomeComponent {
                 }
                 draw_line = null;
                 document.getElementById("line")!.style.backgroundColor = "transparent"
+                if(productionNetwork.get(fromElement) !== undefined){
+                  productionNetwork.get(fromElement)?.push(new productionNetworkElement(shape.shapeID,"circle"))
+                }else{
+                  productionNetwork.set(fromElement,[new productionNetworkElement(shape.shapeID,"circle")])
+                }
+
               }
             }else if(shape.type == "rect"){
               if(canvasGlobal.isPointInPath( queueArea.get(shape.shapeID),e.offsetX,e.offsetY)){
@@ -307,6 +315,16 @@ export class HomeComponent {
                 }
                 draw_line = null;
                 document.getElementById("line")!.style.backgroundColor = "transparent"
+                console.log(productionNetwork.get(fromElement))
+                if(productionNetwork.get(fromElement) !== undefined){
+                  console.log("lol")
+                  productionNetwork.get(fromElement)?.push(new productionNetworkElement(shape.shapeID,"rect"))
+
+                }else{
+                  productionNetwork.set(fromElement,[new productionNetworkElement(shape.shapeID,"rect")])
+                }
+                fromElement = null;
+                console.log(productionNetwork)
               }
             }
           }

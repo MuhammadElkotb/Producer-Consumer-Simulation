@@ -1,3 +1,4 @@
+import { productionNetworkElement } from './productionNetworkElement';
 import { Component, OnInit } from '@angular/core';
 
 
@@ -11,6 +12,7 @@ var shapesBack:shapeBack[] = [];
 //mapping between shape ID and its area on canvas
 let machineArea = new Map<string, Path2D>();
 let queueArea = new Map<string, Path2D>();
+let productionNetwork = new Map<productionNetworkElement,productionNetworkElement[]>();
 
 
 //----------------------------------------------------------------------//
@@ -236,6 +238,8 @@ export class HomeComponent {
                     }
                     selectLine = true;
                     created_line = true
+
+
                 }
               }else if(shape.type == "rect"){
                 if(canvasGlobal.isPointInPath( queueArea.get(shape.shapeID),e.offsetX,e.offsetY)){

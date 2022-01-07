@@ -1,10 +1,11 @@
 package Model;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class Machine {
 
-    String serviceTime;
+    long serviceTime;
     String ID;
     ArrayList<QueueI> nextQueues ;
     ArrayList<QueueI> backQueues ;
@@ -12,7 +13,7 @@ public class Machine {
     ArrayList<ConsumerThread> consumers ;
 
 
-    public Machine(String serviceTime , ArrayList<QueueI> nextQueues, ArrayList<QueueI> backQueues){
+    public Machine(long serviceTime , ArrayList<QueueI> nextQueues, ArrayList<QueueI> backQueues){
         this.serviceTime = serviceTime;
         this.backQueues = backQueues;
         this.nextQueues = nextQueues;
@@ -25,7 +26,7 @@ public class Machine {
             consumers.add(new ConsumerThread(backQueue));
         }
     }
-    public String getServiceTime() {
+    public long getServiceTime() {
         return this.serviceTime;
     }
     public ArrayList<QueueI> getNextQueues() throws Exception{
@@ -47,12 +48,13 @@ public class Machine {
     public void addBackQueue(QueueI queue) {
         this.backQueues.add(queue);
     }
-    public void setServiceTime(String serviceTime) {
+    public void setServiceTime(long serviceTime) {
         this.serviceTime = serviceTime;
     }
     public void activate(){
         while (true){
             for (ProducerThread producer:producers){
+                for (long i=0;i<=serviceTime;i++){}
                 producer.run();
             }
             for (ConsumerThread consumer:consumers){

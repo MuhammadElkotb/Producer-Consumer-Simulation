@@ -10,11 +10,13 @@ public class ConsumerThread extends Thread{
         if(queue.getQueue().isEmpty()){
             try {
                 wait();
-                queue.dequeue();
+
             } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
+                try {
+                    queue.dequeue();
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
             }
         }else {
             try {

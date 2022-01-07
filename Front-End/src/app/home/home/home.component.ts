@@ -47,7 +47,6 @@ var strokeColor:string = 'black';
 var strokeWidth:number = 3;
 
 //----------------------------------------------------------------------//
-
 // array for ID generator
 var serial = Array.from(Array(1000000).keys());
 
@@ -85,13 +84,7 @@ export interface shapeBack{
 export class HomeComponent {
 
   title = 'Front-End';
-
-  
-
   constructor() {}
-
-
-
 
 
   placeElement(shape : shapeBack, fillcolor : string){
@@ -187,7 +180,7 @@ export class HomeComponent {
           canvasGlobal.lineTo(width,height);
           canvasGlobal.fill();
           canvasGlobal.closePath();
-          
+
           break;
         default:
           break;
@@ -300,10 +293,10 @@ export class HomeComponent {
                   createdLine = true;
                   selectLine = false;
                   lineButtonFlag = false;
-  
+
                   console.log(draw_line);
                   if(draw_line != null && (draw_line.width != 0 && draw_line.height != 0)){
-                  
+
                     this.placeElement(draw_line, "");
                     shapesBack.push(draw_line);
                   }
@@ -320,9 +313,9 @@ export class HomeComponent {
 
                 }
                 break;
-  
-              
-              case "machinequeue": 
+
+
+              case "machinequeue":
                 if(canvasGlobal.isPointInPath( queueArea.get(shape.shapeID),e.offsetX,e.offsetY)){
                 console.log("INSIDE CASE 2");
 
@@ -330,7 +323,7 @@ export class HomeComponent {
                   createdLine = true;
                   selectLine = false;
                   lineButtonFlag = false;
-  
+
                   if(draw_line != null && (draw_line.width != 0 && draw_line.height != 0)){
                     this.placeElement(draw_line, "");
                     shapesBack.push(draw_line);
@@ -342,7 +335,7 @@ export class HomeComponent {
                   if(productionNetwork.get(fromElement)){
                     console.log("lol")
                     productionNetwork.get(fromElement)?.push(new productionNetworkElement(shape.shapeID,"queue"))
-  
+
                   }else{
                     productionNetwork.set(fromElement,[new productionNetworkElement(shape.shapeID,"queue")])
                   }
@@ -351,9 +344,9 @@ export class HomeComponent {
 
                 }
                 break;
-              
-              
-                default : 
+
+
+                default :
                   canvasGlobal.clearRect(0,0,1380,675);
                   createLineFlag =false;
                   createdLine = true;
@@ -364,19 +357,19 @@ export class HomeComponent {
                     this.placeElement(shapesBack[i], "");
                   }
                   break;
-               
+
 
               }
-            } 
-                       
+            }
+
           }
           draw_line = null;
 
-          
+
           for(var i = 0; i < shapesBack.length; i++){
             this.placeElement(shapesBack[i], "");
           }
-        
+
         tempType = "";
 
 
@@ -390,7 +383,7 @@ export class HomeComponent {
     }
 
 
-    
+
 
 
 //----------------------------------------------------------------------//
@@ -543,7 +536,7 @@ export class HomeComponent {
 
 
     }
-  
+
     if(createMachineFlag){
 
 
@@ -563,7 +556,7 @@ export class HomeComponent {
       draw_line = null;
     }
 
-   
+
     if(!createQueueFlag){
       document.getElementById("queue")!.style.backgroundColor = "transparent"
 
@@ -584,4 +577,3 @@ export class HomeComponent {
 
 }
 //----------------------------------------------------------------------//
-

@@ -23,6 +23,7 @@ var draw_line : shapeBack = null;
 //----------------------------------------------------------------------//
 
 //flag to activate buttons of creation
+
 var createLineFlag : boolean = false;
 var createdLine : boolean = false;
 

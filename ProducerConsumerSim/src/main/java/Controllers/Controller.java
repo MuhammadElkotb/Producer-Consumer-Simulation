@@ -1,6 +1,6 @@
 package Controllers;
 
-import Model.ColoGenerator;
+import Model.ColorGenerator;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +15,7 @@ public class Controller {
 
     @GetMapping("/generate")
     String generateColor(){
-        return ColoGenerator.generate();
+        return ColorGenerator.generate();
     }
 
 

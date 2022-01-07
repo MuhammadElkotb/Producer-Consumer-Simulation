@@ -9,14 +9,14 @@ public class ProducerThread extends Thread{
     public void run(){
         if(queue.getQueue().isEmpty()){
             try {
-                queue.enqueue(new Product(ColoGenerator.generate()));
+                queue.enqueue(new Product(ColorGenerator.generate()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
             notify();
         }else {
             try {
-                queue.enqueue(new Product(ColoGenerator.generate()));
+                queue.enqueue(new Product(ColorGenerator.generate()));
             } catch (Exception e) {
                 e.printStackTrace();
             }

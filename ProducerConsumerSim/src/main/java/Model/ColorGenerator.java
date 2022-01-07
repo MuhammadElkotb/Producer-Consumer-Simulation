@@ -2,7 +2,7 @@ package Model;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class ColoGenerator {
+public class ColorGenerator {
     public static String generate(){
         int r = ThreadLocalRandom.current().nextInt(0, 256);
         int g = ThreadLocalRandom.current().nextInt(0, 256);

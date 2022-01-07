@@ -1,42 +1,64 @@
 package Model;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class Machine implements MachineI{
+public class Machine implements {
 
     String serviceTime;
+    String ID;
+    ArrayList<QueueI> nextQueues ;
+    ArrayList<QueueI> backQueues ;
+    ArrayList<ProducerThread> producers ;
+    ArrayList<ConsumerThread> consumers ;
 
-    ArrayList<QueueI> nextQueues;
 
-    public Machine(String serviceTime){
+    public Machine(String serviceTime , ArrayList<QueueI> nextQueues, ArrayList<QueueI> backQueues){
         this.serviceTime = serviceTime;
-        this.nextQueues = new ArrayList<>();
+        this.backQueues = backQueues;
+        this.nextQueues = nextQueues;
+        this.producers = new ArrayList<>();
+        this.consumers = new ArrayList<>();
+        for(QueueI nextQueue:nextQueues){
+            producers.add(new ProducerThread(nextQueue));
+        }
+        for(QueueI backQueue:backQueues){
+            consumers.add(new ConsumerThread(backQueue));
+        }
     }
 
     public String getServiceTime() {
         return this.serviceTime;
     }
 
-    @Override
-    public void addQueue(QueueI queue) {
-        this.nextQueues.add(queue);
-    }
 
-    @Override
+
     public ArrayList<QueueI> getNextQueues() throws Exception{
         if(nextQueues.size() == 0){
-            throw new Exception("THIS MACHINE POINTS TO NO QUEUES");
+            throw new Exception("THIS MACHINE POINTS TO NO NEXT QUEUES");
         }
         return this.nextQueues;
     }
+    public ArrayList<QueueI> getBackQueues() throws Exception{
+        if(backQueues.size() == 0){
+            throw new Exception("THIS MACHINE POINTS TO NO BACK QUEUES");
+        }
+        return this.backQueues;
+    }
+
+
+
+    public void addNextQueue(QueueI queue) {
+        this.nextQueues.add(queue);
+    }
+    public void addBackQueue(QueueI queue) {
+        this.backQueues.add(queue);
+    }
+
+
 
     public void setServiceTime(String serviceTime) {
         this.serviceTime = serviceTime;
     }
 
-    @Override
-    public void service(Product product) {
 
-    }
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 public class Queue implements QueueI {
 
     private ArrayList<Product> products;
-    private ArrayList<MachineI> machines;
+    private ArrayList<Machine> machines;
     private static int maxSize = 10000;
 
     public Queue(){

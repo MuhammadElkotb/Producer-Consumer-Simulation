@@ -2,22 +2,57 @@ package Controllers;
 
 import Model.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import javax.ws.rs.core.MultivaluedMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Network {
 
-    static BufferQueue createStartingQueue() throws Exception{
+    static BufferQueue createStartingQueue() throws Exception {
         BufferQueue startingQueue = new BufferQueue();
-        for(int i = 0; i < 40; i++){
+        for (int i = 0; i < 40; i++) {
             startingQueue.enqueue(new Product());
         }
         return startingQueue;
 
     }
-    public static int play(){
+    public static void  initialize(MultivaluedMap<productionNetworkElement, productionNetworkElement> forwardProductionNetwork, MultivaluedMap<productionNetworkElement, productionNetworkElement> backwardProductionNetwork){
+        HashMap<productionNetworkElement, ArrayList<productionNetworkElement>> modifiedForwardProductionNetwork = new HashMap<>();
+        HashMap<productionNetworkElement, ArrayList<productionNetworkElement>> modifiedBackwardProductionNetwork = new HashMap<>();
+
+
+
+        for(productionNetworkElement key:forwardProductionNetwork.keySet()){
+            if(modifiedForwardProductionNetwork.containsKey(key)){
+                modifiedForwardProductionNetwork.get(key).add(forwardProductionNetwork.getFirst(key));
+                forwardProductionNetwork.remove(key,forwardProductionNetwork.getFirst(key));
+            }else{
+                modifiedForwardProductionNetwork.put(key,new ArrayList<productionNetworkElement>((Collection<? extends productionNetworkElement>) forwardProductionNetwork.remove(key)));
+
+            }
+        }
+        System.out.println(modifiedForwardProductionNetwork.entrySet());
+
+        for(productionNetworkElement key:backwardProductionNetwork.keySet()){
+            if(modifiedBackwardProductionNetwork.containsKey(key)){
+                modifiedBackwardProductionNetwork.get(key).add(backwardProductionNetwork.getFirst(key));
+                backwardProductionNetwork.remove(key,backwardProductionNetwork.getFirst(key));
+            }else{
+                modifiedBackwardProductionNetwork.put(key,new ArrayList<productionNetworkElement>((Collection<? extends productionNetworkElement>) backwardProductionNetwork.remove(key)));
+            }
+        }
+        System.out.println(modifiedForwardProductionNetwork.entrySet());
+    }
+
+
+
+
+    public static void play(){
 
         BufferQueue bufferQueue0 = new BufferQueue();
         BufferQueue bufferQueue1 = new BufferQueue();
@@ -44,7 +79,8 @@ public class Network {
         Machine machine7 = new Machine("Machine 7");
 
 
-        int ret = 0;
+
+
 
 
         try {
@@ -73,7 +109,5 @@ public class Network {
             System.out.println("======================================================================");
             System.out.println(e);
         }
-        return ret;
-
     }
 }

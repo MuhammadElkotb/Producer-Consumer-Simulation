@@ -12,83 +12,86 @@ public class Machine {
     private String machineName;
     private boolean consumed = false;
     private long serviceTime;
+    private BufferQueue prevBufferQueue;
+    private BufferQueue nextBufferQueue;
 
-    public Machine(String machineName){
+    public Machine(String machineName) {
         this.machineName = machineName;
         this.serviceTime = ThreadLocalRandom.current().nextInt(800, 3501);
     }
 
-
     public void activate(BufferQueue prevBufferQueue, BufferQueue nextBufferQueue){
+
 
 
             Runnable consumer = () -> {
 
-                    while (true) {
-                        synchronized (object) {
+                while (true) {
+                    synchronized (object) {
 
-                                try {
-                                    while (prevBufferQueue.getProducts().isEmpty()) {
-                                        System.out.println(this.machineName + " is ready ");
-                                        object.wait();
-                                    }
+                        try {
+                            while (prevBufferQueue.getProducts().isEmpty()) {
+                                System.out.println(this.machineName + " is ready ");
+                                object.wait();
+                            }
 
-                                    product = prevBufferQueue.dequeue();
-                                    consumed = true;
+                            product = prevBufferQueue.dequeue();
+                            consumed = true;
 
-                                    object.wait();
-                                    object.notifyAll();
+                            object.wait();
+                            object.notifyAll();
 
-                                } catch (Exception e) {
-                                    System.out.println("CONSUMER");
-                                    System.out.println(e);
-                                }
-
+                        } catch (Exception e) {
+                            System.out.println("CONSUMER");
+                            System.out.println(e);
                         }
 
+                    }
                 }
             };
+
+
 
 
             Runnable producer = () -> {
                 while (true) {
                     synchronized (object) {
 
-                            try {
-                                if (!prevBufferQueue.getProducts().isEmpty() && !consumed) {
-                                    object.notifyAll();
-                                }
-                                while (consumed) {
-                                    Thread.sleep(serviceTime);
-                                    object.notifyAll();
-                                    nextBufferQueue.enqueue(product);
-                                    System.out.println("Servicing" + " - " + this.machineName + " - " + this.serviceTime + " - "
-                                            + product);
-                                    System.out.println(this.machineName + " Prev " + prevBufferQueue.getProducts());
-                                    System.out.println(this.machineName + " Next " + nextBufferQueue.getProducts());
-                                    consumed = false;
-                                    object.wait();
-                                }
-                            } catch (Exception e) {
-                                System.out.println("PRODUCER");
-                                System.out.println(e);
+                        try {
+                            if (!prevBufferQueue.getProducts().isEmpty() && !consumed) {
+                                object.notifyAll();
                             }
+                            while (consumed) {
+                                Thread.sleep(serviceTime);
+                                object.notifyAll();
+                                nextBufferQueue.enqueue(product);
+                                System.out.println("Servicing" + " - " + this.machineName + " - " + this.serviceTime + " - "
+                                        + product);
+                                System.out.println(this.machineName + " Prev " + prevBufferQueue.getProducts());
+                                System.out.println(this.machineName + " Next " + nextBufferQueue.getProducts());
+                                consumed = false;
+                                object.wait();
+                            }
+                        } catch (Exception e) {
+                            System.out.println("PRODUCER");
+                            System.out.println(e);
+                        }
+
 
                     }
-
-            }
+                }
 
             };
-
 
 
             Thread produceThread = new Thread(producer);
             Thread consumeThread = new Thread(consumer);
 
+            this.prevBufferQueue = prevBufferQueue;
+            this.nextBufferQueue = nextBufferQueue;
             produceThread.start();
             consumeThread.start();
 
-
-
     }
+
 }

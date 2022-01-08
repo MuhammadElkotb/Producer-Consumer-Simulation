@@ -1,11 +1,11 @@
 package Model;
 
 public class Product {
-    private String color = "";
+    private String color;
 
 
-    public Product(String color){
-        this.color = color;
+    public Product(){
+        this.color = ColorGenerator.generate();
     }
     public String getColor() {
         return this.color;
@@ -13,5 +13,10 @@ public class Product {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    @Override
+    public String toString(){
+        return this.color.substring(4, 6);
     }
 }

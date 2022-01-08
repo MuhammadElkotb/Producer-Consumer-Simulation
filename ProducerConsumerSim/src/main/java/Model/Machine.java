@@ -1,66 +1,74 @@
 package Model;
 
-import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Machine {
+    private Product product;
+    private final Object object = new Object();
+    private String machineName;
+    private boolean consumed = false;
+    private long serviceTime;
 
-    long serviceTime;
-    String ID;
-    ArrayList<QueueI> nextQueues ;
-    ArrayList<QueueI> backQueues ;
-    ArrayList<ProducerThread> producers ;
-    ArrayList<ConsumerThread> consumers ;
-
-
-    public Machine(long serviceTime , ArrayList<QueueI> nextQueues, ArrayList<QueueI> backQueues){
-        this.serviceTime = serviceTime;
-        this.backQueues = backQueues;
-        this.nextQueues = nextQueues;
-        this.producers = new ArrayList<>();
-        this.consumers = new ArrayList<>();
-        for(QueueI nextQueue:nextQueues){
-            producers.add(new ProducerThread(nextQueue));
-        }
-        for(QueueI backQueue:backQueues){
-            consumers.add(new ConsumerThread(backQueue));
-        }
-    }
-    public long getServiceTime() {
-        return this.serviceTime;
-    }
-    public ArrayList<QueueI> getNextQueues() throws Exception{
-        if(nextQueues.size() == 0){
-            throw new Exception("THIS MACHINE POINTS TO NO NEXT QUEUES");
-        }
-        return this.nextQueues;
-    }
-    public ArrayList<QueueI> getBackQueues() throws Exception{
-        if(backQueues.size() == 0){
-            throw new Exception("THIS MACHINE POINTS TO NO BACK QUEUES");
-        }
-        return this.backQueues;
+    public Machine(String machineName){
+        this.machineName = machineName;
+        this.serviceTime = ThreadLocalRandom.current().nextInt(800, 3501);
     }
 
-    public void addNextQueue(QueueI queue) {
-        this.nextQueues.add(queue);
-    }
-    public void addBackQueue(QueueI queue) {
-        this.backQueues.add(queue);
-    }
-    public void setServiceTime(long serviceTime) {
-        this.serviceTime = serviceTime;
-    }
-    public void activate(){
-        while (true){
-            for (ProducerThread producer:producers){
-                for (long i=0;i<=serviceTime;i++){}
-                producer.run();
+
+    public void activate(BufferQueue prevBufferQueue, BufferQueue nextBufferQueue){
+
+
+
+
+        Runnable consumer = () -> {
+            while(true){
+                synchronized (object){
+                    try{
+                        while(prevBufferQueue.getProducts().isEmpty()) {
+                            System.out.println(this.machineName + " is ready ");
+                            Thread.sleep(600);
+                        }
+                        product = prevBufferQueue.dequeue();
+                        consumed = true;
+                        object.notify();
+                        object.wait();
+                    }
+                    catch (Exception e){
+                        System.out.println(e);
+                    }
+                }
             }
-            for (ConsumerThread consumer:consumers){
-                consumer.run();
-            }
-        }
-    }
+        };
 
+
+        Runnable producer = () -> {
+            while(true){
+                synchronized (object){
+                    try{
+                        while(product != null && consumed){
+                            Thread.sleep(serviceTime);
+                            nextBufferQueue.enqueue(product);
+                            System.out.println("Servicing" + " - "
+                                    + product);
+                            object.notify();
+                            System.out.println(this.machineName + " " + prevBufferQueue.getProducts());
+                            System.out.println(this.machineName + " " + nextBufferQueue.getProducts());
+
+                            consumed = false;
+                            object.wait();
+                        }
+                    }
+                    catch (Exception e){
+                        System.out.println(e);
+                    }
+                }
+            }
+        };
+
+        Thread consumeThread = new Thread(consumer);
+        Thread produceThread = new Thread(producer);
+        consumeThread.start();
+        produceThread.start();
+    }
 }

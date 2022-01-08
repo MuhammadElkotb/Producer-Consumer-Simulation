@@ -26,13 +26,13 @@ public class Network {
         Machine machine2 = new Machine("Machine 2");
         Machine machine3 = new Machine("Machine 3");
         Machine machine4 = new Machine("Machine 4");
-
+        System.out.println(bufferQueue0.getProducts());
         try {
+                machine1.activate(bufferQueue0, bufferQueue1);
+                machine2.activate(bufferQueue1, bufferQueue2);
+                machine3.activate(bufferQueue2, bufferQueue3);
+                machine4.activate(bufferQueue3, bufferQueue4);
 
-            machine1.activate(bufferQueue0, bufferQueue1);
-            machine2.activate(bufferQueue1, bufferQueue2);
-            machine3.activate(bufferQueue2, bufferQueue3);
-            machine4.activate(bufferQueue3, bufferQueue4);
         }
         catch (Exception e){
             System.out.println(e);

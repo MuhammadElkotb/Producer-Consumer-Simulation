@@ -1,6 +1,8 @@
 package Model;
 
 
+import java.text.DateFormat;
+import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Machine {
@@ -10,16 +12,15 @@ public class Machine {
     private boolean consumed = false;
     private long serviceTime;
 
-    public Machine(String machineName){
+    public Machine(String machineName, long serviceTime){
         this.machineName = machineName;
-        this.serviceTime = ThreadLocalRandom.current().nextInt(800, 3501);
+        //this.serviceTime = ThreadLocalRandom.current().nextInt(800, 3501);
+        this.serviceTime = serviceTime;
+
     }
 
 
     public void activate(BufferQueue prevBufferQueue, BufferQueue nextBufferQueue){
-
-
-
 
         Runnable consumer = () -> {
             while(true){
@@ -27,12 +28,12 @@ public class Machine {
                     try{
                         while(prevBufferQueue.getProducts().isEmpty()) {
                             System.out.println(this.machineName + " is ready ");
-                            Thread.sleep(600);
+                            object.wait();
                         }
                         product = prevBufferQueue.dequeue();
                         consumed = true;
-                        object.notify();
                         object.wait();
+                        object.notify();
                     }
                     catch (Exception e){
                         System.out.println(e);
@@ -46,15 +47,17 @@ public class Machine {
             while(true){
                 synchronized (object){
                     try{
-                        while(product != null && consumed){
+                        if(!prevBufferQueue.getProducts().isEmpty() && !consumed) {
+                            object.notify();
+                        }
+                        while(consumed){
                             Thread.sleep(serviceTime);
                             nextBufferQueue.enqueue(product);
-                            System.out.println("Servicing" + " - "
+                            System.out.println("Servicing" + " - " + this.machineName + " - "
                                     + product);
-                            object.notify();
                             System.out.println(this.machineName + " " + prevBufferQueue.getProducts());
                             System.out.println(this.machineName + " " + nextBufferQueue.getProducts());
-
+                            object.notify();
                             consumed = false;
                             object.wait();
                         }
@@ -66,8 +69,10 @@ public class Machine {
             }
         };
 
+
         Thread consumeThread = new Thread(consumer);
         Thread produceThread = new Thread(producer);
+
         consumeThread.start();
         produceThread.start();
     }

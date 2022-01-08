@@ -1,5 +1,6 @@
 package Controllers;
 
+import Model.BufferQueue;
 import Model.ColorGenerator;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,8 +16,10 @@ public class Controller {
 
 
     @PostMapping("/play")
-    void generateColor(){
-        Network.play();
+    BufferQueue generateColor(){
+        while(true){
+            return Network.play();
+        }
     }
 
 

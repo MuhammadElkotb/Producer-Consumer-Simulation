@@ -9,7 +9,7 @@ public class BufferQueue {
         this.products = new ArrayList<>();
     }
 
-    public ArrayList<Product> getProducts() {
+    public synchronized ArrayList<Product> getProducts() {
         return this.products;
     }
 
@@ -19,13 +19,20 @@ public class BufferQueue {
 
 
 
-    public void enqueue(Product product){
-        this.products.add(product);
+    public synchronized void enqueue(Product product) throws Exception{
+        synchronized (this){
+            this.products.add(product);
+            this.notify();
+        }
+
     }
 
-    public Product dequeue(){
-        return this.products.remove(0);
+    public Product dequeue() throws Exception{
+        synchronized (this){
+            while(this.products.size() == 0) this.wait();
+            return this.products.remove(0);
+
+        }
+
     }
-
-
 }

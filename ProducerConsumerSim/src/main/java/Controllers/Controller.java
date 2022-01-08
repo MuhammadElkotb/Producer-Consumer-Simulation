@@ -2,6 +2,7 @@ package Controllers;
 
 import Model.BufferQueue;
 import Model.ColorGenerator;
+import javassist.expr.NewArray;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,10 +17,8 @@ public class Controller {
 
 
     @PostMapping("/play")
-    BufferQueue generateColor(){
-        while(true){
-            return Network.play();
-        }
+    String generateColor(){
+        return String.valueOf(Network.play());
     }
 
 

@@ -2,6 +2,7 @@ package Controllers;
 
 import Model.*;
 
+import javax.ws.rs.core.MultivaluedMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,24 +10,27 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Network {
-    public static void  initialize(Map<productionNetworkElement, productionNetworkElement> forwardProductionNetwork,Map<productionNetworkElement, productionNetworkElement> backwardProductionNetwork){
+    public static void  initialize(MultivaluedMap<productionNetworkElement, productionNetworkElement> forwardProductionNetwork, MultivaluedMap<productionNetworkElement, productionNetworkElement> backwardProductionNetwork){
         HashMap<productionNetworkElement, ArrayList<productionNetworkElement>> modifiedForwardProductionNetwork = new HashMap<>();
         HashMap<productionNetworkElement, ArrayList<productionNetworkElement>> modifiedBackwardProductionNetwork = new HashMap<>();
 
         for(productionNetworkElement key:forwardProductionNetwork.keySet()){
             if(modifiedForwardProductionNetwork.containsKey(key)){
-                modifiedForwardProductionNetwork.get(key).add(forwardProductionNetwork.get(key));
+                modifiedForwardProductionNetwork.get(key).add(forwardProductionNetwork.getFirst(key));
+                forwardProductionNetwork.remove(key,forwardProductionNetwork.getFirst(key));
             }else{
-                modifiedForwardProductionNetwork.put(key,new ArrayList<productionNetworkElement>((Collection<? extends productionNetworkElement>) forwardProductionNetwork.get(key)));
+                modifiedForwardProductionNetwork.put(key,new ArrayList<productionNetworkElement>((Collection<? extends productionNetworkElement>) forwardProductionNetwork.remove(key)));
+
             }
         }
         System.out.println(modifiedForwardProductionNetwork.entrySet());
 
         for(productionNetworkElement key:backwardProductionNetwork.keySet()){
             if(modifiedBackwardProductionNetwork.containsKey(key)){
-                modifiedBackwardProductionNetwork.get(key).add(backwardProductionNetwork.get(key));
+                modifiedBackwardProductionNetwork.get(key).add(backwardProductionNetwork.getFirst(key));
+                backwardProductionNetwork.remove(key,backwardProductionNetwork.getFirst(key));
             }else{
-                modifiedBackwardProductionNetwork.put(key,new ArrayList<productionNetworkElement>((Collection<? extends productionNetworkElement>) backwardProductionNetwork.get(key)));
+                modifiedBackwardProductionNetwork.put(key,new ArrayList<productionNetworkElement>((Collection<? extends productionNetworkElement>) backwardProductionNetwork.remove(key)));
             }
         }
         System.out.println(modifiedForwardProductionNetwork.entrySet());

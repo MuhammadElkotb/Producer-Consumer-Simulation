@@ -1,3 +1,4 @@
+import { HomeService } from './home.service';
 import { productionNetworkElement } from './productionNetworkElement';
 import { Component, OnInit } from '@angular/core';
 
@@ -12,7 +13,9 @@ var shapesBack:shapeBack[] = [];
 //mapping between shape ID and its area on canvas
 let machineArea = new Map<string, Path2D>();
 let queueArea = new Map<string, Path2D>();
-let productionNetwork = new Map<productionNetworkElement,productionNetworkElement[]>();
+let forwardProductionNetwork = new Map<productionNetworkElement,productionNetworkElement>();
+let backwardProductionNetwork = new Map<productionNetworkElement,productionNetworkElement>();
+
 
 //----------------------------------------------------------------------//
 
@@ -84,7 +87,7 @@ export interface shapeBack{
 export class HomeComponent {
 
   title = 'Front-End';
-  constructor() {}
+  constructor(private server: HomeService) {}
 
 
   placeElement(shape : shapeBack, fillcolor : string){
@@ -302,13 +305,11 @@ export class HomeComponent {
                   }
                   draw_line = null;
                   document.getElementById("line")!.style.backgroundColor = "transparent";
-                  if(productionNetwork.get(fromElement)){
-                    productionNetwork.get(fromElement)?.push(new productionNetworkElement(shape.shapeID,"machine"))
-                  }
-                  else{
-                    productionNetwork.set(fromElement,[new productionNetworkElement(shape.shapeID,"machine")])
-                  }
-                  console.log(productionNetwork);
+
+
+                  backwardProductionNetwork.set(new productionNetworkElement(shape.shapeID,"machine"),fromElement)
+
+                  console.log(backwardProductionNetwork);
                   fromElement = null;
 
                 }
@@ -330,17 +331,12 @@ export class HomeComponent {
                   }
                   draw_line = null;
                   document.getElementById("line")!.style.backgroundColor = "transparent";
-
                   console.log(fromElement);
-                  if(productionNetwork.get(fromElement)){
-                    console.log("lol")
-                    productionNetwork.get(fromElement)?.push(new productionNetworkElement(shape.shapeID,"queue"))
 
-                  }else{
-                    productionNetwork.set(fromElement,[new productionNetworkElement(shape.shapeID,"queue")])
-                  }
+                  forwardProductionNetwork.set(fromElement,new productionNetworkElement(shape.shapeID,"queue"))
+
                   fromElement = null;
-                  console.log(productionNetwork);
+                  console.log(forwardProductionNetwork);
 
                 }
                 break;
@@ -523,8 +519,16 @@ export class HomeComponent {
     shapesBack = []
   }
 
-  //----------------------------------------------------------------------//
+//----------------------------------------------------------------------//
 
+
+run(){
+  this.server.generateNetwork([forwardProductionNetwork,backwardProductionNetwork]).subscribe((data:string)=>{
+    console.log(data)
+  })
+}
+
+//----------------------------------------------------------------------//
   disableButtons(){
     if(createLineFlag){
 

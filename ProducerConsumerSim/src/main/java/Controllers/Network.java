@@ -2,10 +2,35 @@ package Controllers;
 
 import Model.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Network {
+    public static void  initialize(Map<productionNetworkElement, productionNetworkElement> forwardProductionNetwork,Map<productionNetworkElement, productionNetworkElement> backwardProductionNetwork){
+        HashMap<productionNetworkElement, ArrayList<productionNetworkElement>> modifiedForwardProductionNetwork = new HashMap<>();
+        HashMap<productionNetworkElement, ArrayList<productionNetworkElement>> modifiedBackwardProductionNetwork = new HashMap<>();
 
+        for(productionNetworkElement key:forwardProductionNetwork.keySet()){
+            if(modifiedForwardProductionNetwork.containsKey(key)){
+                modifiedForwardProductionNetwork.get(key).add(forwardProductionNetwork.get(key));
+            }else{
+                modifiedForwardProductionNetwork.put(key,new ArrayList<productionNetworkElement>((Collection<? extends productionNetworkElement>) forwardProductionNetwork.get(key)));
+            }
+        }
+        System.out.println(modifiedForwardProductionNetwork.entrySet());
+
+        for(productionNetworkElement key:backwardProductionNetwork.keySet()){
+            if(modifiedBackwardProductionNetwork.containsKey(key)){
+                modifiedBackwardProductionNetwork.get(key).add(backwardProductionNetwork.get(key));
+            }else{
+                modifiedBackwardProductionNetwork.put(key,new ArrayList<productionNetworkElement>((Collection<? extends productionNetworkElement>) backwardProductionNetwork.get(key)));
+            }
+        }
+        System.out.println(modifiedForwardProductionNetwork.entrySet());
+    }
 
     public static BufferQueue play(){
 

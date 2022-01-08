@@ -11,6 +11,8 @@ public class Machine {
     private String machineName;
     private boolean consumed = false;
     private long serviceTime;
+    private BufferQueue prevBufferQueue;
+    private BufferQueue nextBufferQueue;
 
     public Machine(String machineName){
         this.machineName = machineName;
@@ -26,11 +28,11 @@ public class Machine {
             while(true){
                 synchronized (object){
                     try{
-                        while(prevBufferQueue.getProducts().isEmpty()) {
+                        while(this.prevBufferQueue.getProducts().isEmpty()) {
                             System.out.println(this.machineName + " is ready ");
                             object.wait();
                         }
-                        product = prevBufferQueue.dequeue();
+                        product = this.prevBufferQueue.dequeue();
                         consumed = true;
                         object.wait();
                         object.notify();
@@ -47,16 +49,16 @@ public class Machine {
             while(true){
                 synchronized (object){
                     try{
-                        if(!prevBufferQueue.getProducts().isEmpty() && !consumed) {
+                        if(!this.prevBufferQueue.getProducts().isEmpty() && !consumed) {
                             object.notify();
                         }
                         while(consumed){
                             Thread.sleep(serviceTime);
-                            nextBufferQueue.enqueue(product);
+                            this.nextBufferQueue.enqueue(product);
                             System.out.println("Servicing" + " - " + this.machineName + " - "
                                     + product);
-                            System.out.println(this.machineName + " " + prevBufferQueue.getProducts());
-                            System.out.println(this.machineName + " " + nextBufferQueue.getProducts());
+                            System.out.println(this.machineName + " " + this.prevBufferQueue.getProducts());
+                            System.out.println(this.machineName + " " + this.nextBufferQueue.getProducts());
                             object.notify();
                             consumed = false;
                             object.wait();

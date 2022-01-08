@@ -4,9 +4,15 @@ import java.util.ArrayList;
 
 public class BufferQueue {
     private ArrayList<Product> products;
+    private String ID;
 
-    public BufferQueue(){
+    public BufferQueue(String ID){
+        this.ID = ID;
         this.products = new ArrayList<>();
+    }
+
+    public String getID() {
+        return ID;
     }
 
     public synchronized ArrayList<Product> getProducts() {

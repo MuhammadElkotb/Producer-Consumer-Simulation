@@ -15,7 +15,7 @@ public class Network {
     private ArrayList<Machine> machines;
 
     static BufferQueue createStartingQueue() throws Exception {
-        BufferQueue startingQueue = new BufferQueue();
+        BufferQueue startingQueue = new BufferQueue("98564");
         for (int i = 0; i < 40; i++) {
             startingQueue.enqueue(new Product());
         }
@@ -55,13 +55,37 @@ public class Network {
                           HashMap<productionNetworkElement, ArrayList<productionNetworkElement>> modifiedBackwardProductionNetwork){
         for(productionNetworkElement element:modifiedForwardProductionNetwork.keySet()){
             Machine machine = new Machine(element.getID());
+            ArrayList<BufferQueue> queues = new ArrayList<>();
+            for (productionNetworkElement valueElement:modifiedForwardProductionNetwork.get(element)){
+                BufferQueue queue = new BufferQueue(valueElement.getID());
+                queues.add(queue);
+            }
+            machine.setNextBufferQueues(queues);
             this.machines.add(machine);
 
         }
         for (productionNetworkElement element:modifiedBackwardProductionNetwork.keySet()){
             if(!modifiedForwardProductionNetwork.containsKey(element)){
                 Machine machine = new Machine(element.getID());
+                ArrayList<BufferQueue> queues1 = new ArrayList<>();
+                for (productionNetworkElement valueElement:modifiedBackwardProductionNetwork.get(element)){
+                    BufferQueue queue = new BufferQueue(valueElement.getID());
+                    queues1.add(queue);
+                }
+                machine.setPrevBufferQueues(queues1);
                 this.machines.add(machine);
+            }else {
+                for(Machine machine:this.machines){
+                    if(machine.getMachineName() == element.getID()) {
+                        ArrayList<BufferQueue> queues2 = new ArrayList<>();
+                        for (productionNetworkElement valueElement : modifiedBackwardProductionNetwork.get(element)) {
+                            BufferQueue queue = new BufferQueue(valueElement.getID());
+                            queues2.add(queue);
+                        }
+                        machine.setPrevBufferQueues(queues2);
+                        break;
+                    }
+                }
             }
         }
     }
@@ -70,12 +94,12 @@ public class Network {
 
     public static void play(){
 
-        BufferQueue bufferQueue0 = new BufferQueue();
-        BufferQueue bufferQueue1 = new BufferQueue();
-        BufferQueue bufferQueue3 = new BufferQueue();
-        BufferQueue bufferQueue4 = new BufferQueue();
-        BufferQueue bufferQueue5 = new BufferQueue();
-        BufferQueue bufferQueue6 = new BufferQueue();
+        BufferQueue bufferQueue0 = new BufferQueue("120");
+        BufferQueue bufferQueue1 = new BufferQueue("256");
+        BufferQueue bufferQueue3 = new BufferQueue("6464");
+        BufferQueue bufferQueue4 = new BufferQueue("64");
+        BufferQueue bufferQueue5 = new BufferQueue("65");
+        BufferQueue bufferQueue6 = new BufferQueue("655");
 
         InputThread inputThread = new InputThread();
 

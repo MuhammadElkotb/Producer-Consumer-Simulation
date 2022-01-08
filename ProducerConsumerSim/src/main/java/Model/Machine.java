@@ -12,8 +12,8 @@ public class Machine {
     private String machineName;
     private boolean consumed = false;
     private long serviceTime;
-    private BufferQueue prevBufferQueue;
-    private BufferQueue nextBufferQueue;
+    private ArrayList<BufferQueue> prevBufferQueues;
+    private ArrayList<BufferQueue> nextBufferQueues;
 
     public Machine(String machineName) {
         this.machineName = machineName;
@@ -22,6 +22,14 @@ public class Machine {
 
     public String getMachineName() {
         return machineName;
+    }
+
+    public void setNextBufferQueues(ArrayList<BufferQueue> nextBufferQueues) {
+        this.nextBufferQueues = nextBufferQueues;
+    }
+
+    public void setPrevBufferQueues(ArrayList<BufferQueue> prevBufferQueues) {
+        this.prevBufferQueues = prevBufferQueues;
     }
 
     public void activate(BufferQueue prevBufferQueue, BufferQueue nextBufferQueue){
@@ -91,8 +99,8 @@ public class Machine {
             Thread produceThread = new Thread(producer);
             Thread consumeThread = new Thread(consumer);
 
-            this.prevBufferQueue = prevBufferQueue;
-            this.nextBufferQueue = nextBufferQueue;
+//            this.prevBufferQueue = prevBufferQueue;
+//            this.nextBufferQueue = nextBufferQueue;
             produceThread.start();
             consumeThread.start();
 

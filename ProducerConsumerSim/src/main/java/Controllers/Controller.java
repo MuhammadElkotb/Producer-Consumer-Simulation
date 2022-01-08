@@ -19,8 +19,10 @@ public class Controller {
     @PostMapping("/generateNetwork")
     String generateNetwork(@RequestBody ArrayList<MultivaluedMap<productionNetworkElement, productionNetworkElement>> productionNetwork){
         System.out.println("INSIDE GENERATE NETWORK");
+        Network network = new Network();
+
         try {
-            Network.initialize(productionNetwork.get(0),productionNetwork.get(1));
+            network.initialize(productionNetwork.get(0),productionNetwork.get(1));
             return ("Network is generated successfully");
         }catch (Exception e){
             return(e.getMessage());

@@ -20,6 +20,10 @@ public class Machine {
         this.serviceTime = ThreadLocalRandom.current().nextInt(800, 3501);
     }
 
+    public String getMachineName() {
+        return machineName;
+    }
+
     public void activate(BufferQueue prevBufferQueue, BufferQueue nextBufferQueue){
 
 

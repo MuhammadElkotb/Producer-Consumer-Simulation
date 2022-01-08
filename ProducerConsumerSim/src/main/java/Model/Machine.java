@@ -1,8 +1,8 @@
 package Model;
 
 
-import com.sun.enterprise.module.HK2Module;
-
+import java.text.DateFormat;
+import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Machine {
@@ -11,42 +11,29 @@ public class Machine {
     private String machineName;
     private boolean consumed = false;
     private long serviceTime;
-    private Thread produceThread;
-    private Thread consumeThread;
 
     public Machine(String machineName){
         this.machineName = machineName;
         this.serviceTime = ThreadLocalRandom.current().nextInt(800, 3501);
+
+
     }
 
 
     public void activate(BufferQueue prevBufferQueue, BufferQueue nextBufferQueue){
 
-
-
-
-
         Runnable consumer = () -> {
-
             while(true){
-
-                synchronized (prevBufferQueue){
-
+                synchronized (object){
                     try{
-                        System.out.println(this.machineName);
                         while(prevBufferQueue.getProducts().isEmpty()) {
                             System.out.println(this.machineName + " is ready ");
-
-                            prevBufferQueue.wait();
-                            System.out.println("lol");
-
-
+                            object.wait();
                         }
                         product = prevBufferQueue.dequeue();
                         consumed = true;
-                        produceThread.run();
-//                        object.notify();
-//                        object.wait();
+                        object.wait();
+                        object.notify();
                     }
                     catch (Exception e){
                         System.out.println(e);
@@ -58,28 +45,21 @@ public class Machine {
 
         Runnable producer = () -> {
             while(true){
-                synchronized (nextBufferQueue ){
+                synchronized (object){
                     try{
+                        if(!prevBufferQueue.getProducts().isEmpty() && !consumed) {
+                            object.notify();
+                        }
                         while(consumed){
-                            if(nextBufferQueue.getProducts().isEmpty()){
-                                Thread.sleep(serviceTime);
-                                nextBufferQueue.enqueue(product);
-                                System.out.println("notify");
-                                nextBufferQueue.notifyAll();
-                            }else {
-                                Thread.sleep(serviceTime);
-                                nextBufferQueue.enqueue(product);
-                            }
-
-                            System.out.println("Servicing" + " - "
+                            Thread.sleep(serviceTime);
+                            nextBufferQueue.enqueue(product);
+                            System.out.println("Servicing" + " - " + this.machineName + " - "
                                     + product);
-//                            object.notify();
                             System.out.println(this.machineName + " " + prevBufferQueue.getProducts());
                             System.out.println(this.machineName + " " + nextBufferQueue.getProducts());
-
+                            object.notify();
                             consumed = false;
-                            consumeThread.run();
-//                            object.wait();
+                            object.wait();
                         }
                     }
                     catch (Exception e){
@@ -89,9 +69,11 @@ public class Machine {
             }
         };
 
-        consumeThread = new Thread(consumer);
-        produceThread = new Thread(producer);
-        consumeThread.start();
 
+        Thread consumeThread = new Thread(consumer);
+        Thread produceThread = new Thread(producer);
+
+        consumeThread.start();
+        produceThread.start();
     }
 }

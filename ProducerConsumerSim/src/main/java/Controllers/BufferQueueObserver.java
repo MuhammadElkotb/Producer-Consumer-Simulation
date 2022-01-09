@@ -10,6 +10,6 @@ public class BufferQueueObserver implements Observer{
 
     @Override
     public void update(Network network) {
-        network.incrementCtr();
+        network.setChange(true);
     }
 }

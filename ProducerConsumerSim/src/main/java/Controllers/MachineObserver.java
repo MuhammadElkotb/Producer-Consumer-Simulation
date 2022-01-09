@@ -6,7 +6,6 @@ public class MachineObserver implements Observer{
         this.machineName = machineName;
     }
     public void update(){
-
     }
     public void update(Network network){}
 }

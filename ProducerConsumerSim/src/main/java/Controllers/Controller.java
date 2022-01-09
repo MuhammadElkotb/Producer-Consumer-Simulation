@@ -1,15 +1,26 @@
 package Controllers;
 
+
+import org.springframework.*;
 import Model.BufferQueue;
 import Model.ColorGenerator;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.ArrayType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import javassist.expr.NewArray;
+import net.bytebuddy.description.method.MethodDescription;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import Model.productionNetworkElement;
 
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.sse.Sse;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,30 +39,38 @@ import reactor.core.publisher.Flux;
 public class Controller {
 
     Network network = new Network(6);
-    int networkctr = network.getCtr();
     @PostMapping("/generateNetwork")
-    String generateNetwork(@RequestBody ArrayList<MultivaluedMap<productionNetworkElement, productionNetworkElement>> productionNetwork){
+    String generateNetwork(@RequestBody Map<String, Object> productionNetwork){
         System.out.println("INSIDE GENERATE NETWORK");
       //  Network network = new Network();
 
         try {
-            network.initialize(productionNetwork.get(0),productionNetwork.get(1));
+            Gson gson = new Gson();
+
+            ArrayList<MultivaluedHashMap<String, String>> newProductionNetwork = new ArrayList<>();
+            TypeFactory factory = TypeFactory.defaultInstance();
+
+            System.out.println(productionNetwork);
+
+            ObjectMapper map = new ObjectMapper();
+
+
+
+
+            // network.initialize(productionNetwork.get(0),productionNetwork.get(1));
             return ("Network is generated successfully");
         }catch (Exception e){
+
+            e.printStackTrace();
             return(e.getMessage());
         }
 
     }
 
 
-
     @GetMapping("/getBuffer")
     ArrayList<BufferQueue> getBuffer(){
-        if(network.getCtr() > networkctr){
-            networkctr = network.getCtr();
-            return network.getBufferQueues();
-        }
-        return null;
+        return network.getBufferQueues();
     }
 
     @PostMapping("/play")

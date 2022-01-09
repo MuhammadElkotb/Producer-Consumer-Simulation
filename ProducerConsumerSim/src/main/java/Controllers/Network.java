@@ -4,6 +4,7 @@ import Model.*;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,24 +16,31 @@ public class Network {
     private ArrayList<Machine> machines;
 
     private ArrayList<BufferQueue> bufferQueues;
-    private int queueCtr = 0;
+    private boolean onChange = false;
 
-    public void incrementCtr(){
-        queueCtr++;
+    public void flipChange(){
+        this.onChange = !this.onChange;
     }
-    public int getCtr(){
-        return this.queueCtr;
+    public void setChange(boolean change){
+        this.onChange = change;
+    }
+    public boolean getChange(){
+        return this.onChange;
     }
     public Network(int n){
         this.bufferQueues = new ArrayList<>();
-
         for(int i = 0; i < n; i++){
             this.bufferQueues.add(new BufferQueue(String.valueOf(i)));
         }
     }
 
     public ArrayList<BufferQueue> getBufferQueues() {
-        return this.bufferQueues;
+        if(this.getChange() == true){
+            this.setChange(false);
+            return this.bufferQueues;
+        }
+        else
+            return null;
     }
 
     public void setBufferQueue(ArrayList<BufferQueue> bufferQueues) {
@@ -48,7 +56,7 @@ public class Network {
 
     }
 
-    public void  initialize(MultivaluedMap<productionNetworkElement, productionNetworkElement> forwardProductionNetwork, MultivaluedMap<productionNetworkElement, productionNetworkElement> backwardProductionNetwork){
+    public void  initialize(MultivaluedHashMap<productionNetworkElement, productionNetworkElement> forwardProductionNetwork, MultivaluedHashMap<productionNetworkElement, productionNetworkElement> backwardProductionNetwork){
         HashMap<productionNetworkElement, ArrayList<productionNetworkElement>> modifiedForwardProductionNetwork = new HashMap<>();
         HashMap<productionNetworkElement, ArrayList<productionNetworkElement>> modifiedBackwardProductionNetwork = new HashMap<>();
 
@@ -74,8 +82,8 @@ public class Network {
         }
         System.out.println(modifiedForwardProductionNetwork.entrySet());
         this.createMachines(modifiedForwardProductionNetwork,modifiedBackwardProductionNetwork);
-
     }
+
     public void createMachines(HashMap<productionNetworkElement, ArrayList<productionNetworkElement>> modifiedForwardProductionNetwork,
                           HashMap<productionNetworkElement, ArrayList<productionNetworkElement>> modifiedBackwardProductionNetwork){
         for(productionNetworkElement element:modifiedForwardProductionNetwork.keySet()){
@@ -130,7 +138,6 @@ public class Network {
         Machine machine5 = new Machine("Machine 5");
         Machine machine6 = new Machine("Machine 6");
         Machine machine7 = new Machine("Machine 7");
-
 
         try {
 

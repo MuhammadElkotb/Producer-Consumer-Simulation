@@ -4,6 +4,12 @@ public class productionNetworkElement {
     private String type;
     private String ID;
 
+
+
+    public productionNetworkElement(){
+
+    }
+
     public String getID() {
         return ID;
     }

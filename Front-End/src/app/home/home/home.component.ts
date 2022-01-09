@@ -12,8 +12,8 @@ var shapesBack:shapeBack[] = [];
 //mapping between shape ID and its area on canvas
 let machineArea = new Map<string, Path2D>();
 let queueArea = new Map<string, Path2D>();
-let forwardProductionNetwork = new Map<productionNetworkElement,productionNetworkElement>();
-let backwardProductionNetwork = new Map<productionNetworkElement,productionNetworkElement>();
+let forwardProductionNetwork = new Map<string,string>();
+let backwardProductionNetwork = new Map<string,string>();
 
 
 //----------------------------------------------------------------------//
@@ -74,6 +74,11 @@ export interface shapeBack{
   type:string;
   is_filled:number;
   shapeID:string;
+}
+
+export interface elementsMap {
+  elementKey:string;
+  values:string[];
 }
 
 //----------------------------------------------------------------------//
@@ -201,7 +206,7 @@ export class HomeComponent {
     var serv = this.server;
     setInterval(function(){
       serv.getBuffer().subscribe((x) => console.log(x));
-    }, 50)
+    }, 15)
     
   }
  
@@ -232,7 +237,7 @@ export class HomeComponent {
       createLineFlag = true;
       createdLine = false;
 
-      var fromElement:productionNetworkElement;
+      var fromElement:string;
       var selectLine = false;
       boardGlobal.addEventListener("mousedown",e=>{
         if(!createdLine &&  lineButtonFlag ){
@@ -254,7 +259,7 @@ export class HomeComponent {
                     selectLine = true;
                     createdLine = true
                     tempType = "machine";
-                    fromElement = new productionNetworkElement(shape.shapeID,"machine");
+                    fromElement = shape.shapeID;
 
                 }
               }else if(shape.type == "queue"){
@@ -275,7 +280,7 @@ export class HomeComponent {
                     selectLine = true;
                     createdLine = true
                     tempType = "queue";
-                    fromElement = new productionNetworkElement(shape.shapeID,"queue")
+                    fromElement = shape.shapeID;
 
                 }
               }
@@ -321,7 +326,7 @@ export class HomeComponent {
                   document.getElementById("line")!.style.backgroundColor = "transparent";
 
 
-                  backwardProductionNetwork.set(new productionNetworkElement(shape.shapeID,"machine"),fromElement)
+                  backwardProductionNetwork.set(shape.shapeID, fromElement)
 
                   console.log(backwardProductionNetwork);
                   fromElement = null;
@@ -347,7 +352,7 @@ export class HomeComponent {
                   document.getElementById("line")!.style.backgroundColor = "transparent";
                   console.log(fromElement);
 
-                  forwardProductionNetwork.set(fromElement,new productionNetworkElement(shape.shapeID,"queue"))
+                  forwardProductionNetwork.set(fromElement, shape.shapeID)
 
                   fromElement = null;
                   console.log(forwardProductionNetwork);
@@ -371,6 +376,8 @@ export class HomeComponent {
 
               }
             }
+
+            
 
           }
           draw_line = null;
@@ -537,9 +544,24 @@ export class HomeComponent {
 
 
 run(){
-  this.server.generateNetwork([forwardProductionNetwork,backwardProductionNetwork]).subscribe((data:string)=>{
-    console.log(data)
+
+
+ 
+
+  console.log(forwardProductionNetwork);
+
+  console.log(forwardProductionNetwork.size)
+  forwardProductionNetwork.forEach((key, value) => {
+    
+    console.log("Key ", key);
+    console.log("value ", value);
+    /*this.server.generateNetwork().subscribe((data:string)=>{
+      
+    })*/
   })
+   
+  
+  
 }
 
 //----------------------------------------------------------------------//

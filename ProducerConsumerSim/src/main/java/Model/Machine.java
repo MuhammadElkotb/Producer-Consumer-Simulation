@@ -68,8 +68,6 @@ public class Machine {
             };
 
 
-
-
             Runnable producer = () -> {
                 while (true) {
                     synchronized (object) {

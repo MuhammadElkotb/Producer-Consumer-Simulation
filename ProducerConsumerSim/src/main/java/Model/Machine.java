@@ -1,6 +1,9 @@
 package Model;
 
 
+import Controllers.EventManager;
+import Controllers.machineObserver;
+
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -14,10 +17,13 @@ public class Machine {
     private long serviceTime;
     private ArrayList<BufferQueue> prevBufferQueues;
     private ArrayList<BufferQueue> nextBufferQueues;
+    private EventManager manager;
 
     public Machine(String machineName) {
         this.machineName = machineName;
         this.serviceTime = ThreadLocalRandom.current().nextInt(800, 3501);
+        this.manager = EventManager.getInstance();
+        manager.addListeners(this.machineName,new machineObserver(this.machineName));
     }
 
     public String getMachineName() {
@@ -44,6 +50,7 @@ public class Machine {
                         try {
                             while (prevBufferQueue.getProducts().isEmpty()) {
                                 System.out.println(this.machineName + " is ready ");
+                                manager.notify(this.machineName);
                                 object.wait();
                             }
 

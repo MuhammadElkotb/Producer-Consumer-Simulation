@@ -77,8 +77,8 @@ export interface shapeBack{
 }
 
 export interface elementsMap {
-  elementKey:string;
-  values:string[];
+  elementKey:string[];
+  values:string;
 }
 
 //----------------------------------------------------------------------//
@@ -556,14 +556,54 @@ run(){
   console.log(forwardProductionNetwork);
 
   console.log(forwardProductionNetwork.size)
+  var temp : string[][][][] = [];
+
+  temp.push([]);
+  temp.push([]);
+
+  let ctr = 0;
+
   forwardProductionNetwork.forEach((key, value) => {
 
+    temp[0].push([]);
+    temp[0][ctr].push([]);
+    temp[0][ctr].push([]);
+    temp[0][ctr][1] = key;
+    temp[0][ctr][0].push(value);
+    ctr++;
     console.log("Key ", key);
     console.log("value ", value);
-    /*this.server.generateNetwork().subscribe((data:string)=>{
-
-    })*/
+    
   })
+  ctr = 0;
+  backwardProductionNetwork.forEach((key, value) => {
+
+    temp[1].push([]);
+    temp[1][ctr].push([]);
+    temp[1][ctr].push([]);
+    temp[1][ctr][1] = key;
+    temp[1][ctr][0].push(value);
+    ctr++;
+    console.log("Key ", key);
+    console.log("value ", value);
+    
+  })
+  const convMap = Object.create(null)
+  forwardProductionNetwork.forEach((val: string[], key: string) => {
+    convMap[key] = val;
+  });
+  const convMap2 = Object.create(null)
+  backwardProductionNetwork.forEach((val: string[], key: string) => {
+    convMap2[key] = val;
+  });
+
+  console.log();
+  
+  console.log(JSON.stringify(temp))
+  this.server.generateNetwork(JSON.stringify(convMap)).subscribe((data)=>{
+    this.server.generateNetwork(JSON.stringify(convMap2)).subscribe();
+  });
+  
 
 
 

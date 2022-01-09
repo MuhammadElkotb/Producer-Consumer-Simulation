@@ -14,6 +14,8 @@ import javassist.expr.NewArray;
 import net.bytebuddy.description.method.MethodDescription;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.MultiValueMapAdapter;
 import org.springframework.web.bind.annotation.*;
 import Model.productionNetworkElement;
 
@@ -39,20 +41,35 @@ import reactor.core.publisher.Flux;
 public class Controller {
 
     Network network = new Network(6);
+    ArrayList<HashMap<String, String[]>> newProductionNetwork = new ArrayList<>();
     @PostMapping("/generateNetwork")
-    String generateNetwork(@RequestBody Map<String, Object> productionNetwork){
+    String generateNetwork(@RequestBody String productionNetwork){
         System.out.println("INSIDE GENERATE NETWORK");
       //  Network network = new Network();
 
         try {
-            Gson gson = new Gson();
 
-            ArrayList<MultivaluedHashMap<String, String>> newProductionNetwork = new ArrayList<>();
+
+            if(this.newProductionNetwork.size() > 1){
+                this.newProductionNetwork = new ArrayList<>();
+            }
             TypeFactory factory = TypeFactory.defaultInstance();
 
-            System.out.println(productionNetwork);
+            //System.out.println(productionNetwork[0][0][0][0]);
 
             ObjectMapper map = new ObjectMapper();
+
+            this.newProductionNetwork.add(map.readValue(productionNetwork, new TypeReference<HashMap<String, String[]>>() {
+            }));
+
+
+            System.out.println(this.newProductionNetwork);
+
+
+
+
+
+
 
 
 

@@ -6,8 +6,8 @@ import productionNetworkElement from './productionNetworkElement';
 export class HomeService {
 
   constructor(private http:HttpClient) { }
-  public generateNetwork(productionNetwork : Map<string, string>[]):Observable<string>{
-    return this.http.post("http://localhost:8080/generateNetwork",{body: productionNetwork},{responseType:"text"})
+  public generateNetwork(productionNetwork : string):Observable<string>{
+    return this.http.post("http://localhost:8080/generateNetwork", productionNetwork,{responseType:"text"})
   }
 
   public play(){

@@ -1,8 +1,8 @@
 package Controllers;
 
-public class machineObserver {
+public class MachineObserver implements Observer{
     private String machineName;
-    public machineObserver(String machineName){
+    public MachineObserver(String machineName){
         this.machineName = machineName;
     }
     public void update(){

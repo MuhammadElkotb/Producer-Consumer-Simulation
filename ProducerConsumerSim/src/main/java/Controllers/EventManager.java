@@ -1,10 +1,9 @@
 package Controllers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class EventManager {
-    private HashMap<String,machineObserver> listeners;
+    private HashMap<String, Observer> listeners;
     private static EventManager instance = null;
     private EventManager(){
         this.listeners = new HashMap<>();
@@ -16,14 +15,14 @@ public class EventManager {
             return instance;
         }
     }
-    public void addListeners(String machineName, machineObserver listener) {
-        this.listeners.put(machineName,listener);
+    public void addListener(String concern, Observer listener) {
+        this.listeners.put(concern,listener);
     }
 
-    public void removeListeners(machineObserver listener) {
-        this.listeners.remove(listener);
+    public void removeListener(String concern,Observer listener) {
+        this.listeners.remove(concern,listener);
     }
-    public void notify(String machineName) {
-        listeners.get(machineName).update();
+    public void notify(String concern) {
+        listeners.get(concern).update();
     }
 }

@@ -2,11 +2,9 @@ package Model;
 
 
 import Controllers.EventManager;
-import Controllers.machineObserver;
+import Controllers.MachineObserver;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Machine {
@@ -23,7 +21,7 @@ public class Machine {
         this.machineName = machineName;
         this.serviceTime = ThreadLocalRandom.current().nextInt(800, 3501);
         this.manager = EventManager.getInstance();
-        manager.addListeners(this.machineName,new machineObserver(this.machineName));
+        manager.addListener(this.machineName,new MachineObserver(this.machineName));
     }
 
     public String getMachineName() {

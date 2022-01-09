@@ -1,9 +1,10 @@
 package Model;
 
 
-import java.text.DateFormat;
+import Controllers.EventManager;
+import Controllers.MachineObserver;
+
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Machine {
@@ -12,18 +13,31 @@ public class Machine {
     private String machineName;
     private boolean consumed = false;
     private long serviceTime;
-    private BufferQueue prevBufferQueue;
-    private BufferQueue nextBufferQueue;
+    private ArrayList<BufferQueue> prevBufferQueues;
+    private ArrayList<BufferQueue> nextBufferQueues;
+    private EventManager manager;
 
     public Machine(String machineName) {
         this.machineName = machineName;
         this.serviceTime = ThreadLocalRandom.current().nextInt(1000, 20000);
+        this.manager = EventManager.getInstance();
+        manager.addListener(this.machineName,new MachineObserver(this.machineName));
+    }
+
+    public String getMachineName() {
+        return machineName;
+    }
+
+    public void setNextBufferQueues(ArrayList<BufferQueue> nextBufferQueues) {
+        this.nextBufferQueues = nextBufferQueues;
+    }
+
+    public void setPrevBufferQueues(ArrayList<BufferQueue> prevBufferQueues) {
+        this.prevBufferQueues = prevBufferQueues;
     }
 
     public void activate(BufferQueue prevBufferQueue, BufferQueue nextBufferQueue){
-
-
-
+        
             Runnable consumer = () -> {
 
                 while (true) {
@@ -31,6 +45,9 @@ public class Machine {
 
                         try {
                             while (prevBufferQueue.getProducts().isEmpty()) {
+
+                                System.out.println(this.machineName + " is ready ");
+                                manager.notify(this.machineName);
                                 object.wait();
                             }
 
@@ -41,8 +58,7 @@ public class Machine {
                             object.notifyAll();
 
                         } catch (Exception e) {
-                            System.out.println("CONSUMER");
-                            System.out.println(e);
+                            e.printStackTrace();
                         }
 
                     }
@@ -69,11 +85,8 @@ public class Machine {
                                 object.wait();
                             }
                         } catch (Exception e) {
-                            System.out.println("PRODUCER");
-                            System.out.println(e);
+                            e.printStackTrace();
                         }
-
-
                     }
                 }
 
@@ -83,8 +96,8 @@ public class Machine {
             Thread produceThread = new Thread(producer);
             Thread consumeThread = new Thread(consumer);
 
-            this.prevBufferQueue = prevBufferQueue;
-            this.nextBufferQueue = nextBufferQueue;
+//            this.prevBufferQueue = prevBufferQueue;
+//            this.nextBufferQueue = nextBufferQueue;
             produceThread.start();
             consumeThread.start();
 

@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Network {
+    private ArrayList<Machine> machines;
 
     private ArrayList<BufferQueue> bufferQueues;
 
@@ -34,13 +35,14 @@ public class Network {
     static BufferQueue createStartingQueue() throws Exception {
         BufferQueue startingQueue = new BufferQueue();
         for (int i = 0; i < 20; i++) {
+
             startingQueue.enqueue(new Product());
         }
         return startingQueue;
 
     }
 
-    public static void  initialize(MultivaluedMap<productionNetworkElement, productionNetworkElement> forwardProductionNetwork, MultivaluedMap<productionNetworkElement, productionNetworkElement> backwardProductionNetwork){
+    public void  initialize(MultivaluedMap<productionNetworkElement, productionNetworkElement> forwardProductionNetwork, MultivaluedMap<productionNetworkElement, productionNetworkElement> backwardProductionNetwork){
         HashMap<productionNetworkElement, ArrayList<productionNetworkElement>> modifiedForwardProductionNetwork = new HashMap<>();
         HashMap<productionNetworkElement, ArrayList<productionNetworkElement>> modifiedBackwardProductionNetwork = new HashMap<>();
 
@@ -50,7 +52,7 @@ public class Network {
                 modifiedForwardProductionNetwork.get(key).add(forwardProductionNetwork.getFirst(key));
                 forwardProductionNetwork.remove(key,forwardProductionNetwork.getFirst(key));
             }else{
-                modifiedForwardProductionNetwork.put(key,new ArrayList<productionNetworkElement>((Collection<? extends productionNetworkElement>) forwardProductionNetwork.remove(key)));
+                modifiedForwardProductionNetwork.put(key,new ArrayList<productionNetworkElement>((Collection<? extends productionNetworkElement>) forwardProductionNetwork.getFirst(key)));
 
             }
         }
@@ -61,21 +63,55 @@ public class Network {
                 modifiedBackwardProductionNetwork.get(key).add(backwardProductionNetwork.getFirst(key));
                 backwardProductionNetwork.remove(key,backwardProductionNetwork.getFirst(key));
             }else{
-                modifiedBackwardProductionNetwork.put(key,new ArrayList<productionNetworkElement>((Collection<? extends productionNetworkElement>) backwardProductionNetwork.remove(key)));
+                modifiedBackwardProductionNetwork.put(key,new ArrayList<productionNetworkElement>((Collection<? extends productionNetworkElement>) backwardProductionNetwork.getFirst(key)));
             }
         }
         System.out.println(modifiedForwardProductionNetwork.entrySet());
-    }
+        this.createMachines(modifiedForwardProductionNetwork,modifiedBackwardProductionNetwork);
 
+    }
+    public void createMachines(HashMap<productionNetworkElement, ArrayList<productionNetworkElement>> modifiedForwardProductionNetwork,
+                          HashMap<productionNetworkElement, ArrayList<productionNetworkElement>> modifiedBackwardProductionNetwork){
+        for(productionNetworkElement element:modifiedForwardProductionNetwork.keySet()){
+            Machine machine = new Machine(element.getID());
+            ArrayList<BufferQueue> queues = new ArrayList<>();
+            for (productionNetworkElement valueElement:modifiedForwardProductionNetwork.get(element)){
+                BufferQueue queue = new BufferQueue(valueElement.getID());
+                queues.add(queue);
+            }
+            machine.setNextBufferQueues(queues);
+            this.machines.add(machine);
+
+        }
+        for (productionNetworkElement element:modifiedBackwardProductionNetwork.keySet()){
+            if(!modifiedForwardProductionNetwork.containsKey(element)){
+                Machine machine = new Machine(element.getID());
+                ArrayList<BufferQueue> queues1 = new ArrayList<>();
+                for (productionNetworkElement valueElement:modifiedBackwardProductionNetwork.get(element)){
+                    BufferQueue queue = new BufferQueue(valueElement.getID());
+                    queues1.add(queue);
+                }
+                machine.setPrevBufferQueues(queues1);
+                this.machines.add(machine);
+            }else {
+                for(Machine machine:this.machines){
+                    if(machine.getMachineName() == element.getID()) {
+                        ArrayList<BufferQueue> queues2 = new ArrayList<>();
+                        for (productionNetworkElement valueElement : modifiedBackwardProductionNetwork.get(element)) {
+                            BufferQueue queue = new BufferQueue(valueElement.getID());
+                            queues2.add(queue);
+                        }
+                        machine.setPrevBufferQueues(queues2);
+                        break;
+                    }
+                }
+            }
+        }
+    }
 
     public void play(){
 
-        BufferQueue bufferQueue0 = new BufferQueue();
-        BufferQueue bufferQueue1 = new BufferQueue();
-        BufferQueue bufferQueue2 = new BufferQueue();
-        BufferQueue bufferQueue3 = new BufferQueue();
-        BufferQueue bufferQueue4 = new BufferQueue();
-        BufferQueue bufferQueue5 = new BufferQueue();
+
 
         InputThread inputThread = new InputThread();
 
@@ -93,7 +129,7 @@ public class Network {
         try {
 
             this.bufferQueues.set(0, createStartingQueue());
-            System.out.println(bufferQueue0.getProducts());
+            System.out.println(this.bufferQueues.get(0).getProducts());
 
 
             machine1.activate(this.bufferQueues.get(0), this.bufferQueues.get(1));
@@ -110,8 +146,7 @@ public class Network {
 
         }
         catch (Exception e){
-            System.out.println("======================================================================");
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 }

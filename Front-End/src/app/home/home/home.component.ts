@@ -2,7 +2,7 @@ import { HomeService } from './home.service';
 import { productionNetworkElement } from './productionNetworkElement';
 import { Component, OnInit } from '@angular/core';
 import { interval, Observable } from 'rxjs';
-import { switchMap } from 'rxjs/operators'; 
+import { switchMap } from 'rxjs/operators';
 
  //container to hold all different shapes on it
 var shapesBack:shapeBack[] = [];
@@ -12,8 +12,8 @@ var shapesBack:shapeBack[] = [];
 //mapping between shape ID and its area on canvas
 let machineArea = new Map<string, Path2D>();
 let queueArea = new Map<string, Path2D>();
-let forwardProductionNetwork = new Map<string,string>();
-let backwardProductionNetwork = new Map<string,string>();
+let forwardProductionNetwork = new Map<string,string[]>();
+let backwardProductionNetwork = new Map<string,string[]>();
 
 
 //----------------------------------------------------------------------//
@@ -109,7 +109,7 @@ export class HomeComponent {
     var type = shape.type;
     var ID = shape.shapeID;
 
-    
+
 
     var area:Path2D|null = new Path2D();
     switch(type){
@@ -196,20 +196,20 @@ export class HomeComponent {
     }
 
   }
-  
+
   play() {
     this.server.play().subscribe();
   }
 
   getBuffer(){
-    
+
     var serv = this.server;
     setInterval(function(){
       serv.getBuffer().subscribe((x) => console.log(x));
     }, 15)
-    
+
   }
- 
+
 
 //----------------------------------------------------------------------//
 
@@ -325,12 +325,13 @@ export class HomeComponent {
                   draw_line = null;
                   document.getElementById("line")!.style.backgroundColor = "transparent";
 
-
-                  backwardProductionNetwork.set(shape.shapeID, fromElement)
-
+                  if(backwardProductionNetwork.has(shape.shapeID)){
+                    backwardProductionNetwork.get(shape.shapeID)?.push(fromElement)
+                  }else{
+                    backwardProductionNetwork.set(shape.shapeID, [fromElement])
+                  }
                   console.log(backwardProductionNetwork);
                   fromElement = null;
-
                 }
                 break;
 
@@ -351,8 +352,12 @@ export class HomeComponent {
                   draw_line = null;
                   document.getElementById("line")!.style.backgroundColor = "transparent";
                   console.log(fromElement);
+                  if(forwardProductionNetwork.has(fromElement)){
+                    forwardProductionNetwork.get(fromElement)?.push(shape.shapeID)
+                  }else{
+                    forwardProductionNetwork.set(fromElement, [shape.shapeID])
 
-                  forwardProductionNetwork.set(fromElement, shape.shapeID)
+                  }
 
                   fromElement = null;
                   console.log(forwardProductionNetwork);
@@ -377,7 +382,7 @@ export class HomeComponent {
               }
             }
 
-            
+
 
           }
           draw_line = null;
@@ -546,22 +551,22 @@ export class HomeComponent {
 run(){
 
 
- 
+
 
   console.log(forwardProductionNetwork);
 
   console.log(forwardProductionNetwork.size)
   forwardProductionNetwork.forEach((key, value) => {
-    
+
     console.log("Key ", key);
     console.log("value ", value);
     /*this.server.generateNetwork().subscribe((data:string)=>{
-      
+
     })*/
   })
-   
-  
-  
+
+
+
 }
 
 //----------------------------------------------------------------------//

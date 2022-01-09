@@ -10,7 +10,10 @@ public class BufferQueue {
     }
 
     public synchronized ArrayList<Product> getProducts() {
-        return this.products;
+        synchronized (this){
+            return this.products;
+
+        }
     }
 
     public void setProducts(ArrayList<Product> products) {

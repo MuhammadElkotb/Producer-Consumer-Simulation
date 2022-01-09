@@ -17,7 +17,7 @@ public class Machine {
 
     public Machine(String machineName) {
         this.machineName = machineName;
-        this.serviceTime = ThreadLocalRandom.current().nextInt(800, 3501);
+        this.serviceTime = ThreadLocalRandom.current().nextInt(1000, 20000);
     }
 
     public void activate(BufferQueue prevBufferQueue, BufferQueue nextBufferQueue){
@@ -31,7 +31,6 @@ public class Machine {
 
                         try {
                             while (prevBufferQueue.getProducts().isEmpty()) {
-                                System.out.println(this.machineName + " is ready ");
                                 object.wait();
                             }
 
@@ -62,13 +61,10 @@ public class Machine {
                                 object.notifyAll();
                             }
                             while (consumed) {
+                                System.out.println("Servicing");
                                 Thread.sleep(serviceTime);
                                 object.notifyAll();
                                 nextBufferQueue.enqueue(product);
-                                System.out.println("Servicing" + " - " + this.machineName + " - " + this.serviceTime + " - "
-                                        + product);
-                                System.out.println(this.machineName + " Prev " + prevBufferQueue.getProducts());
-                                System.out.println(this.machineName + " Next " + nextBufferQueue.getProducts());
                                 consumed = false;
                                 object.wait();
                             }

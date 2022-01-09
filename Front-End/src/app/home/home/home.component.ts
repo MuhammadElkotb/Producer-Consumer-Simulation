@@ -1,9 +1,8 @@
 import { HomeService } from './home.service';
 import { productionNetworkElement } from './productionNetworkElement';
 import { Component, OnInit } from '@angular/core';
-
-
-
+import { interval, Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators'; 
 
  //container to hold all different shapes on it
 var shapesBack:shapeBack[] = [];
@@ -105,6 +104,8 @@ export class HomeComponent {
     var type = shape.type;
     var ID = shape.shapeID;
 
+    
+
     var area:Path2D|null = new Path2D();
     switch(type){
       case "machine":
@@ -190,7 +191,20 @@ export class HomeComponent {
     }
 
   }
+  
+  play() {
+    this.server.play().subscribe();
+  }
 
+  getBuffer(){
+    
+    var serv = this.server;
+    setInterval(function(){
+      serv.getBuffer().subscribe((x) => console.log(x));
+    }, 50)
+    
+  }
+ 
 
 //----------------------------------------------------------------------//
 

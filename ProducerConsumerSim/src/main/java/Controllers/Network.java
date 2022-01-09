@@ -13,18 +13,36 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Network {
 
+    private ArrayList<BufferQueue> bufferQueues;
+
+    public Network(int n){
+        this.bufferQueues = new ArrayList<>();
+
+        for(int i = 0; i < n; i++){
+            this.bufferQueues.add(new BufferQueue());
+        }
+    }
+
+    public ArrayList<BufferQueue> getBufferQueues() {
+        return this.bufferQueues;
+    }
+
+    public void setBufferQueue(ArrayList<BufferQueue> bufferQueues) {
+        this.bufferQueues = bufferQueues;
+    }
+
     static BufferQueue createStartingQueue() throws Exception {
         BufferQueue startingQueue = new BufferQueue();
-        for (int i = 0; i < 40; i++) {
+        for (int i = 0; i < 20; i++) {
             startingQueue.enqueue(new Product());
         }
         return startingQueue;
 
     }
+
     public static void  initialize(MultivaluedMap<productionNetworkElement, productionNetworkElement> forwardProductionNetwork, MultivaluedMap<productionNetworkElement, productionNetworkElement> backwardProductionNetwork){
         HashMap<productionNetworkElement, ArrayList<productionNetworkElement>> modifiedForwardProductionNetwork = new HashMap<>();
         HashMap<productionNetworkElement, ArrayList<productionNetworkElement>> modifiedBackwardProductionNetwork = new HashMap<>();
-
 
 
         for(productionNetworkElement key:forwardProductionNetwork.keySet()){
@@ -50,25 +68,18 @@ public class Network {
     }
 
 
-
-
-    public static void play(){
+    public void play(){
 
         BufferQueue bufferQueue0 = new BufferQueue();
         BufferQueue bufferQueue1 = new BufferQueue();
+        BufferQueue bufferQueue2 = new BufferQueue();
         BufferQueue bufferQueue3 = new BufferQueue();
         BufferQueue bufferQueue4 = new BufferQueue();
         BufferQueue bufferQueue5 = new BufferQueue();
-        BufferQueue bufferQueue6 = new BufferQueue();
 
         InputThread inputThread = new InputThread();
 
-       // inputThread.addProduct(bufferQueue0);
-
-
-
-
-
+        //inputThread.addProduct(bufferQueue0);
 
         Machine machine1 = new Machine("Machine 1");
         Machine machine2 = new Machine("Machine 2");
@@ -79,28 +90,21 @@ public class Network {
         Machine machine7 = new Machine("Machine 7");
 
 
-
-
-
-
         try {
-            bufferQueue0 = createStartingQueue();
 
+            this.bufferQueues.set(0, createStartingQueue());
             System.out.println(bufferQueue0.getProducts());
 
 
-
-            machine1.activate(bufferQueue0, bufferQueue1);
-            machine2.activate(bufferQueue1, bufferQueue3);
-            machine3.activate(bufferQueue1, bufferQueue3);
-            machine4.activate(bufferQueue0, bufferQueue4);
-            machine5.activate(bufferQueue3, bufferQueue5);
-            machine6.activate(bufferQueue5, bufferQueue6);
-            machine6.activate(bufferQueue4, bufferQueue6);
-            machine7.activate(bufferQueue5, bufferQueue6);
-            machine7.activate(bufferQueue4, bufferQueue6);
-
-
+            machine1.activate(this.bufferQueues.get(0), this.bufferQueues.get(1));
+            machine2.activate(this.bufferQueues.get(1), this.bufferQueues.get(2));
+            machine3.activate(this.bufferQueues.get(1), this.bufferQueues.get(2));
+            machine4.activate(this.bufferQueues.get(0), this.bufferQueues.get(3));
+            machine5.activate(this.bufferQueues.get(2), this.bufferQueues.get(4));
+            machine6.activate(this.bufferQueues.get(4), this.bufferQueues.get(5));
+            machine7.activate(this.bufferQueues.get(4), this.bufferQueues.get(5));
+            machine6.activate(this.bufferQueues.get(3), this.bufferQueues.get(5));
+            machine7.activate(this.bufferQueues.get(3), this.bufferQueues.get(5));
 
 
 

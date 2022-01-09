@@ -6,6 +6,7 @@ public class MachineObserver implements Observer{
         this.machineName = machineName;
     }
     public void update(){
-        System.out.println(this.machineName+" is ready");
+
     }
+    public void update(Network network){}
 }

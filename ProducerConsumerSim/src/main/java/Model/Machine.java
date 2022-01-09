@@ -3,6 +3,8 @@ package Model;
 
 import Controllers.EventManager;
 import Controllers.MachineObserver;
+import Controllers.Network;
+import javassist.expr.NewArray;
 
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
@@ -36,8 +38,8 @@ public class Machine {
         this.prevBufferQueues = prevBufferQueues;
     }
 
-    public void activate(BufferQueue prevBufferQueue, BufferQueue nextBufferQueue){
-        
+    public void activate(BufferQueue prevBufferQueue, BufferQueue nextBufferQueue, Network network){
+
             Runnable consumer = () -> {
 
                 while (true) {
@@ -47,11 +49,11 @@ public class Machine {
                             while (prevBufferQueue.getProducts().isEmpty()) {
 
                                 System.out.println(this.machineName + " is ready ");
-                                manager.notify(this.machineName);
+                                manager.notify(this.machineName, network);
                                 object.wait();
                             }
 
-                            product = prevBufferQueue.dequeue();
+                            product = prevBufferQueue.dequeue(network);
                             consumed = true;
 
                             object.wait();
@@ -80,7 +82,7 @@ public class Machine {
                                 System.out.println("Servicing");
                                 Thread.sleep(serviceTime);
                                 object.notifyAll();
-                                nextBufferQueue.enqueue(product);
+                                nextBufferQueue.enqueue(product, network);
                                 consumed = false;
                                 object.wait();
                             }

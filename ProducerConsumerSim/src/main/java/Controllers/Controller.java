@@ -26,6 +26,9 @@ import reactor.core.publisher.Flux;
 @RestController
 @CrossOrigin("http://localhost:4200")
 public class Controller {
+
+    Network network = new Network(6);
+    int networkctr = network.getCtr();
     @PostMapping("/generateNetwork")
     String generateNetwork(@RequestBody ArrayList<MultivaluedMap<productionNetworkElement, productionNetworkElement>> productionNetwork){
         System.out.println("INSIDE GENERATE NETWORK");
@@ -40,21 +43,21 @@ public class Controller {
 
     }
 
-    Network network = new Network(6);
 
 
     @GetMapping("/getBuffer")
-    BufferQueue getBuffer(){
-        return network.getBufferQueues().get(5);
+    ArrayList<BufferQueue> getBuffer(){
+        if(network.getCtr() > networkctr){
+            networkctr = network.getCtr();
+            return network.getBufferQueues();
+        }
+        return null;
     }
 
     @PostMapping("/play")
     void play(){
         network.play();
     }
-
-
-
 
 
 

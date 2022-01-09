@@ -2,6 +2,7 @@ package Model;
 
 import Controllers.BufferQueueObserver;
 import Controllers.EventManager;
+import Controllers.Network;
 
 import java.util.ArrayList;
 
@@ -17,12 +18,6 @@ public class BufferQueue {
         this.manager.addListener(("Queue"+this.bufferID),new BufferQueueObserver());
     }
 
-    public BufferQueue(){
-        this.products = new ArrayList<>();
-        this.manager = EventManager.getInstance();
-        this.manager.addListener(("Queue"+this.bufferID),new BufferQueueObserver());
-
-    }
 
     public String getID() {
         return bufferID;
@@ -41,22 +36,20 @@ public class BufferQueue {
 
 
 
-    public synchronized void enqueue(Product product) throws Exception{
+    public synchronized void enqueue(Product product, Network network) throws Exception{
         synchronized (this){
             this.products.add(product);
-            this.manager.notify("Queue"+this.bufferID);
+            this.manager.notify("Queue"+this.bufferID, network);
             this.notify();
         }
 
     }
 
-    public Product dequeue() throws Exception{
+    public Product dequeue(Network network) throws Exception{
         synchronized (this){
             while(this.products.size() == 0) this.wait();
-            this.manager.notify("Queue"+this.bufferID);
+            this.manager.notify("Queue"+this.bufferID, network);
             return this.products.remove(0);
-
         }
-
     }
 }

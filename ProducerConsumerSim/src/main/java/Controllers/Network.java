@@ -15,12 +15,19 @@ public class Network {
     private ArrayList<Machine> machines;
 
     private ArrayList<BufferQueue> bufferQueues;
+    private int queueCtr = 0;
 
+    public void incrementCtr(){
+        queueCtr++;
+    }
+    public int getCtr(){
+        return this.queueCtr;
+    }
     public Network(int n){
         this.bufferQueues = new ArrayList<>();
 
         for(int i = 0; i < n; i++){
-            this.bufferQueues.add(new BufferQueue());
+            this.bufferQueues.add(new BufferQueue(String.valueOf(i)));
         }
     }
 
@@ -32,11 +39,10 @@ public class Network {
         this.bufferQueues = bufferQueues;
     }
 
-    static BufferQueue createStartingQueue() throws Exception {
-        BufferQueue startingQueue = new BufferQueue();
+     BufferQueue createStartingQueue() throws Exception {
+        BufferQueue startingQueue = new BufferQueue("0");
         for (int i = 0; i < 20; i++) {
-
-            startingQueue.enqueue(new Product());
+            startingQueue.enqueue(new Product(), this);
         }
         return startingQueue;
 
@@ -132,15 +138,15 @@ public class Network {
             System.out.println(this.bufferQueues.get(0).getProducts());
 
 
-            machine1.activate(this.bufferQueues.get(0), this.bufferQueues.get(1));
-            machine2.activate(this.bufferQueues.get(1), this.bufferQueues.get(2));
-            machine3.activate(this.bufferQueues.get(1), this.bufferQueues.get(2));
-            machine4.activate(this.bufferQueues.get(0), this.bufferQueues.get(3));
-            machine5.activate(this.bufferQueues.get(2), this.bufferQueues.get(4));
-            machine6.activate(this.bufferQueues.get(4), this.bufferQueues.get(5));
-            machine7.activate(this.bufferQueues.get(4), this.bufferQueues.get(5));
-            machine6.activate(this.bufferQueues.get(3), this.bufferQueues.get(5));
-            machine7.activate(this.bufferQueues.get(3), this.bufferQueues.get(5));
+            machine1.activate(this.bufferQueues.get(0), this.bufferQueues.get(1), this);
+            machine2.activate(this.bufferQueues.get(1), this.bufferQueues.get(2), this);
+            machine3.activate(this.bufferQueues.get(1), this.bufferQueues.get(2), this);
+            machine4.activate(this.bufferQueues.get(0), this.bufferQueues.get(3), this);
+            machine5.activate(this.bufferQueues.get(2), this.bufferQueues.get(4), this);
+            machine6.activate(this.bufferQueues.get(4), this.bufferQueues.get(5), this);
+            machine7.activate(this.bufferQueues.get(4), this.bufferQueues.get(5), this);
+            machine6.activate(this.bufferQueues.get(3), this.bufferQueues.get(5), this);
+            machine7.activate(this.bufferQueues.get(3), this.bufferQueues.get(5), this);
 
 
 

@@ -22,7 +22,13 @@ public class EventManager {
     public void removeListener(String concern,Observer listener) {
         this.listeners.remove(concern,listener);
     }
-    public void notify(String concern) {
-        listeners.get(concern).update();
+    public void notify(String concern, Network network) {
+        if(concern.contains("Machine")) {
+            listeners.get(concern).update();
+        }
+        else if(concern.contains("Queue")){
+            listeners.get(concern).update(network);
+        }
     }
+
 }

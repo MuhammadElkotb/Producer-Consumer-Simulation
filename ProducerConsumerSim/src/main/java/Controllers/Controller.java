@@ -45,18 +45,14 @@ public class Controller {
     @PostMapping("/generateNetwork")
     String generateNetwork(@RequestBody String productionNetwork){
         System.out.println("INSIDE GENERATE NETWORK");
-      //  Network network = new Network();
+
 
         try {
-
-
-            if(this.newProductionNetwork.size() > 1){
+            if (this.newProductionNetwork.size() > 1) {
                 this.newProductionNetwork = new ArrayList<>();
             }
+
             TypeFactory factory = TypeFactory.defaultInstance();
-
-            //System.out.println(productionNetwork[0][0][0][0]);
-
             ObjectMapper map = new ObjectMapper();
 
             this.newProductionNetwork.add(map.readValue(productionNetwork, new TypeReference<HashMap<String, String[]>>() {
@@ -64,6 +60,9 @@ public class Controller {
 
 
             System.out.println(this.newProductionNetwork);
+            if (this.newProductionNetwork.size() == 2) {
+                network.initialize(newProductionNetwork.get(0), newProductionNetwork.get(1));
+            }
 
 
 
@@ -71,10 +70,6 @@ public class Controller {
 
 
 
-
-
-
-            // network.initialize(productionNetwork.get(0),productionNetwork.get(1));
             return ("Network is generated successfully");
         }catch (Exception e){
 

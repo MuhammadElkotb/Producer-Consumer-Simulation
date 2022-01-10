@@ -30,6 +30,14 @@ public class Machine {
         return machineName;
     }
 
+    public ArrayList<BufferQueue> getNextBufferQueues() {
+        return nextBufferQueues;
+    }
+
+    public ArrayList<BufferQueue> getPrevBufferQueues() {
+        return prevBufferQueues;
+    }
+
     public void setNextBufferQueues(ArrayList<BufferQueue> nextBufferQueues) {
         this.nextBufferQueues = nextBufferQueues;
     }

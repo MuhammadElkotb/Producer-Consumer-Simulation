@@ -10,8 +10,8 @@ export class HomeService {
     return this.http.post("http://localhost:8080/generateNetwork", productionNetwork,{responseType:"text"})
   }
 
-  public play(){
-    return this.http.get("http://localhost:8080/play")
+  public play() : Observable<Object[]>{
+    return this.http.get<Object[]>("http://localhost:8080/play")
   }
   public getBuffer() : Observable<string>{
 

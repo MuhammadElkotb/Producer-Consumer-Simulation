@@ -81,6 +81,22 @@ export interface elementsMap {
   values:string;
 }
 
+export interface Product {
+  color : string;
+}
+
+export interface Machine {
+  machineName : string;
+  product : Product;
+  serviceTime : number;
+}
+
+export interface Buffer {
+  products : Product[];
+  bufferID : string;
+  size : number;
+}
+
 //----------------------------------------------------------------------//
 
 @Component({
@@ -199,16 +215,20 @@ export class HomeComponent {
 
   play() {
     var serv = this.server;
+    var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
+    var canvasGlobal = boardGlobal.getContext("2d")!;
+    
     setInterval(function(){
-      serv.play().subscribe((x) => console.log(x));
+      serv.play().subscribe((x : any) => {
+        console.log(x);
+        for(let i = 0; i < x[0].lendth)
+
+
+      });
     }, 10)
   }
 
-  getBuffer(){
-
-    
-
-  }
+  
 
 
 //----------------------------------------------------------------------//
@@ -441,7 +461,7 @@ export class HomeComponent {
           fiCo : "darkred",
           is_filled : 1,
           stWi : 2,
-          shapeID : get_new_ID()
+          shapeID : "Machine".concat(get_new_ID())
           }
         createMachineFlag = false;
         createdMachine = true;
@@ -504,7 +524,7 @@ export class HomeComponent {
           type : "queue",
           is_filled : 1,
           stWi : 2,
-          shapeID : get_new_ID()
+          shapeID : "Queue".concat(get_new_ID())
           }
           createQueueFlag =false;
           createdQueue = true;

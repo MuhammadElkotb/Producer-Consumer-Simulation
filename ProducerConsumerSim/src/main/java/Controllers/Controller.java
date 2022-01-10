@@ -62,12 +62,6 @@ public class Controller {
                 network.initialize(newProductionNetwork.get(0), newProductionNetwork.get(1));
             }
 
-
-
-
-
-
-
             return ("Network is generated successfully");
         }catch (Exception e){
 

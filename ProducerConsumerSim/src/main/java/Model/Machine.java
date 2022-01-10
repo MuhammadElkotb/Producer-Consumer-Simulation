@@ -71,7 +71,6 @@ public class Machine {
 
                         try {
                             while (prevBufferQueue.getProducts().isEmpty()) {
-
                                 //System.out.println(this.machineName + " is ready ");
                                 manager.notify(this.machineName, network);
                                 object.wait();

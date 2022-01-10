@@ -38,13 +38,13 @@ import reactor.core.publisher.Flux;
 @CrossOrigin("http://localhost:4200")
 public class Controller {
 
-    boolean started = false;
-    Network network = new Network();
+
+    Network network ;
     ArrayList<HashMap<String, String[]>> newProductionNetwork = new ArrayList<>();
     @PostMapping("/generateNetwork")
     String generateNetwork(@RequestBody String productionNetwork){
         System.out.println("INSIDE GENERATE NETWORK");
-
+        network = new Network();
 
         try {
             if (this.newProductionNetwork.size() > 1) {
@@ -53,7 +53,6 @@ public class Controller {
 
             TypeFactory factory = TypeFactory.defaultInstance();
             ObjectMapper map = new ObjectMapper();
-
             this.newProductionNetwork.add(map.readValue(productionNetwork, new TypeReference<HashMap<String, String[]>>() {}));
 
 
@@ -64,7 +63,6 @@ public class Controller {
 
             return ("Network is generated successfully");
         }catch (Exception e){
-
             e.printStackTrace();
             return(e.getMessage());
         }
@@ -73,21 +71,21 @@ public class Controller {
 
 
 
-//    @GetMapping("/test")
-//    ArrayList<Machine> test(){
-//        Network newNet = new Network(5, 4);
-//        newNet.getMachines().get(0).setProduct(new Product());
-//        newNet.getMachines().get(1).setProduct(new Product());
-//        newNet.getMachines().get(2).setProduct(new Product());
-//        return newNet.getMachines();
-//    }
+
 
     @GetMapping("/play")
-    ArrayList<Object> play(){
-        if(!started){
+    String play(){
+        try {
             network.play();
-            started = true;
+            return ("SYSTEM WAS ACTIVATED SUCCESSFULLY");
+        }catch (Exception e){
+            return (e.getMessage());
         }
+    }
+
+    @GetMapping("/polling")
+    ArrayList<Object> polling(){
+        System.out.println("lol");
         return network.getNetwork();
     }
 
@@ -96,6 +94,11 @@ public class Controller {
         return network.replay();
     }
 
+    @GetMapping("/stop")
+    String stop(){
+        network.stop();
+        return ("SYSTEM WAS STOPPED SUCCESSFULLY");
+    }
 
     /*@RequestMapping(value = "/play", method = RequestMethod.GET, produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ArrayList<BufferQueue>> getBuffers(){

@@ -23,6 +23,7 @@ public class Network {
     private Orginator orginator;
 
     private boolean onChange = false;
+    public boolean stop = false;
 
     public ArrayList<Machine> getMachines() {
         return this.machines;
@@ -141,27 +142,33 @@ public class Network {
             }
         }
     }
+    public void stop(){
+        this.stop = true;
+    }
 
 
     public void play(){
 
+        this.stop = false;
+//        InputThread inputThread = new InputThread();
+//        inputThread.addProduct(this.bufferQueues.get("Queue999999"));
 
-        System.out.println(this.machines);
-        System.out.println(this.bufferQueues);
-
-        InputThread inputThread = new InputThread();
-
-        //inputThread.addProduct(this.bufferQueues.get(0));
         try {
             this.createStartingQueue(this.bufferQueues.get("Queue999999"));
+
+            System.out.println(this.bufferQueues);
+            System.out.println(this.machines);
 
             for(Machine machine:machines){
                 for (BufferQueue nextQueue:machine.getNextBufferQueues()){
                     for (BufferQueue prevQueue:machine.getPrevBufferQueues()){
+
                         machine.activate(prevQueue,nextQueue,this);
+
                     }
                 }
             }
+
         }
         catch (Exception e){
             e.printStackTrace();

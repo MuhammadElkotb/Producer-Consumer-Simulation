@@ -10,13 +10,17 @@ export class HomeService {
     return this.http.post("http://localhost:8080/generateNetwork", productionNetwork,{responseType:"text"})
   }
 
-  public play() : Observable<Object[]>{
-    return this.http.get<Object[]>("http://localhost:8080/play")
+  public play():Observable<string>{
+    return this.http.get("http://localhost:8080/play", {responseType:"text"})
   }
-  public getBuffer() : Observable<string>{
 
-    return this.http.get("http://localhost:8080/getBuffer", {responseType:"text"});
-    
+  public polling() :Observable<Object[]> {
+    return this.http.get<Object[]>("http://localhost:8080/polling");
+
+  }
+
+  public stop() :Observable<string>{
+    return this.http.get("http://localhost:8080/stop", {responseType:"text"});
   }
 
 }

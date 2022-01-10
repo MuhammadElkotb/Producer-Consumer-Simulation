@@ -16,7 +16,7 @@ public class BufferQueue {
         this.bufferID = bufferID;
         this.products = new ArrayList<>();
         this.manager = EventManager.getInstance();
-        this.manager.addListener(("Queue"+this.bufferID),new BufferQueueObserver());
+        this.manager.addListener(this.bufferID,new BufferQueueObserver());
     }
 
 
@@ -48,7 +48,7 @@ public class BufferQueue {
     public synchronized void enqueue(Product product, Network network) throws Exception{
         synchronized (this){
             this.products.add(product);
-            this.manager.notify("Queue"+this.bufferID, network);
+            this.manager.notify(this.bufferID, network);
             this.notify();
         }
 
@@ -57,7 +57,7 @@ public class BufferQueue {
     public Product dequeue(Network network) throws Exception{
         synchronized (this){
             while(this.products.size() == 0) this.wait();
-            this.manager.notify("Queue"+this.bufferID, network);
+            this.manager.notify(this.bufferID, network);
             return this.products.remove(0);
         }
     }

@@ -18,6 +18,8 @@ public class Machine {
     private ArrayList<BufferQueue> prevBufferQueues;
     private ArrayList<BufferQueue> nextBufferQueues;
     private EventManager manager;
+    private Thread produceThread;
+    private Thread consumeThread;
 
     public Machine(String machineName) {
         this.machineName = machineName;
@@ -90,6 +92,9 @@ public class Machine {
                         }
 
                     }
+                    if(network.stop){
+                        this.consumeThread.stop();
+                    }
                 }
             };
 
@@ -113,13 +118,15 @@ public class Machine {
                             e.printStackTrace();
                         }
                     }
+                    if(network.stop){
+                        this.produceThread.stop();
+                    }
                 }
 
             };
 
-
-            Thread produceThread = new Thread(producer);
-            Thread consumeThread = new Thread(consumer);
+            this.produceThread = new Thread(producer);
+            this.consumeThread = new Thread(consumer);
 
 //            this.prevBufferQueue = prevBufferQueue;
 //            this.nextBufferQueue = nextBufferQueue;

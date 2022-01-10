@@ -30,5 +30,4 @@ public class EventManager {
             listeners.get(concern).update(network);
         }
     }
-
 }

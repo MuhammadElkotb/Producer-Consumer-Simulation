@@ -12,10 +12,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
+
+
 public class Network {
+
+
     private ArrayList<Machine> machines;
-
-
     private HashMap<String,BufferQueue> bufferQueues;
     private CareTaker careTaker;
     private Orginator orginator;
@@ -50,20 +52,20 @@ public class Network {
     }
 
     public ArrayList<Object> getNetwork() {
-        System.out.println("CHANGE -> " + this.getChange());
         if(this.getChange() == true){
             this.setChange(false);
-
             ArrayList<Object> ret = new ArrayList<>();
             ret.add(this.machines);
-            ret.add((ArrayList<BufferQueue>) this.bufferQueues.values());
+            ret.add(this.bufferQueues.values());
             this.orginator.setNetwork(ret);
             this.careTaker.addSnapshot(this.orginator.saveNetworktoMemento());
+            System.out.println(ret);
             return ret;
         }
         else
             return null;
     }
+
     public ArrayList<Object> replay(){
         ArrayList<Object> networks = new ArrayList<>();
         for(int i=0; i < this.careTaker.getSize();i++){
@@ -78,13 +80,10 @@ public class Network {
         this.bufferQueues.put(ID,queue);
     }
 
-     BufferQueue createStartingQueue() throws Exception {
-        BufferQueue startingQueue = new BufferQueue("0");
-        for (int i = 0; i < 20; i++) {
-            startingQueue.enqueue(new Product(), this);
+     void createStartingQueue(BufferQueue bufferQueue) throws Exception {
+        for (int i = 0; i < 6; i++) {
+            bufferQueue.enqueue(new Product(), this);
         }
-        return startingQueue;
-
     }
 
     public void  initialize(HashMap<String, String[]> forwardProductionNetwork, HashMap<String, String[]> backwardProductionNetwork){
@@ -105,7 +104,6 @@ public class Network {
             }
             machine.setNextBufferQueues(queues);
             this.machines.add(machine);
-
         }
         //backward initilaization
 
@@ -143,8 +141,6 @@ public class Network {
                 }
             }
         }
-
-
     }
     public void stop(){
         this.stop = true;
@@ -154,9 +150,11 @@ public class Network {
     public void play(){
 
         this.stop = false;
-        InputThread inputThread = new InputThread();
-        inputThread.addProduct(this.bufferQueues.get("999999"));
+//        InputThread inputThread = new InputThread();
+//        inputThread.addProduct(this.bufferQueues.get("Queue999999"));
+
         try {
+            this.createStartingQueue(this.bufferQueues.get("Queue999999"));
 
             for(Machine machine:machines){
                 for (BufferQueue nextQueue:machine.getNextBufferQueues()){
@@ -167,8 +165,6 @@ public class Network {
                     }
                 }
             }
-
-
 
         }
         catch (Exception e){

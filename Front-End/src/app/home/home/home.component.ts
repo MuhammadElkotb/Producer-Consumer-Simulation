@@ -197,18 +197,9 @@ export class HomeComponent {
 
   }
 
-  play() {
-    var serv = this.server;
-    setInterval(function(){
-      serv.play().subscribe((x) => console.log(x));
-    }, 10)
-  }
 
-  getBuffer(){
 
-    
 
-  }
 
 
 //----------------------------------------------------------------------//
@@ -441,7 +432,7 @@ export class HomeComponent {
           fiCo : "darkred",
           is_filled : 1,
           stWi : 2,
-          shapeID : get_new_ID()
+          shapeID :"Machine"+ get_new_ID()
           }
         createMachineFlag = false;
         createdMachine = true;
@@ -504,7 +495,7 @@ export class HomeComponent {
           type : "queue",
           is_filled : 1,
           stWi : 2,
-          shapeID : get_new_ID()
+          shapeID : "Queue"+get_new_ID()
           }
           createQueueFlag =false;
           createdQueue = true;
@@ -573,7 +564,7 @@ run(){
     ctr++;
     console.log("Key ", key);
     console.log("value ", value);
-    
+
   })
   ctr = 0;
   backwardProductionNetwork.forEach((key, value) => {
@@ -586,7 +577,7 @@ run(){
     ctr++;
     console.log("Key ", key);
     console.log("value ", value);
-    
+
   })
   const convMap = Object.create(null)
   forwardProductionNetwork.forEach((val: string[], key: string) => {
@@ -598,18 +589,31 @@ run(){
   });
 
   console.log();
-  
+
   console.log(JSON.stringify(temp))
   this.server.generateNetwork(JSON.stringify(convMap)).subscribe((data)=>{
-    this.server.generateNetwork(JSON.stringify(convMap2)).subscribe();
+    this.server.generateNetwork(JSON.stringify(convMap2)).subscribe((data)=>{
+      this.server.play().subscribe((data)=>{
+        var serv = this.server;
+        setInterval(function(){
+          serv.polling().subscribe((x) => console.log(x));
+        }, 10)
+      });
+    });
   });
-  
-
-
-
 }
 
 //----------------------------------------------------------------------//
+stop(){
+  this.server.stop().subscribe((data:string)=>{
+    console.log(data)
+
+  });
+}
+
+
+//----------------------------------------------------------------------//
+
   disableButtons(){
     if(createLineFlag){
 

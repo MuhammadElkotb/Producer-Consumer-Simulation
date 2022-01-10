@@ -89,6 +89,8 @@ export interface Machine {
   machineName : string;
   product : Product;
   serviceTime : number;
+  prevBufferQueues : Buffer[];
+  nexrtBufferQueues : Buffer[];
 }
 
 export interface Buffer {
@@ -213,8 +215,7 @@ export class HomeComponent {
 
   }
 
-
-
+ 
 
 
 
@@ -551,6 +552,7 @@ export class HomeComponent {
     canvasGlobal.clearRect(0,0,1380,675);
     machineArea.clear();
     queueArea.clear();
+    shapesBack = [];
     shapesBack = []
   }
 
@@ -560,7 +562,8 @@ export class HomeComponent {
 run(){
 
 
-
+  var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
+  var canvasGlobal = boardGlobal.getContext("2d")!;
 
   console.log(forwardProductionNetwork);
 
@@ -616,9 +619,63 @@ run(){
         var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
         var canvasGlobal = boardGlobal.getContext("2d")!;
         setInterval(function(){
-          serv.polling().subscribe((x : any) => {
-            console.log(x);
-            for(let i = 0; i < x[0].length;i++){}
+          serv.polling().subscribe((x : Object[]) => {
+            if(x != null){
+
+              var machines : Machine[] = Object.assign(x[0]);
+              var buffers : Buffer[] = Object.assign(x[1]);
+              console.log(buffers.length)
+    
+              
+    
+              for(let i = 0; i < machines.length; i++){
+                console.log(machines[i].product.color);
+                var color = machines[i].product.color;
+                var machineID = machines[i].machineName;
+                var area = machineArea.get(machineID);
+                
+    
+                for(var shape of shapesBack){
+                  if(shape.shapeID == machineID){
+                    area.arc(shape.x, shape.y, 0.5*shape.width, 0, 2*Math.PI);
+                    canvasGlobal.beginPath();
+                    canvasGlobal.strokeStyle = shape.stCo;
+                    canvasGlobal.lineWidth = shape.stWi;
+                    canvasGlobal.fillStyle = color;
+                    canvasGlobal.arc(shape.x, shape.y, 0.5*shape.width, 0, 2*Math.PI);
+                    canvasGlobal.fill();
+                    canvasGlobal.stroke();
+                  }
+                }
+                area = null;
+              }
+    
+              for(let i = 0; i < buffers.length; i++){
+        
+                var bufferID = buffers[i].bufferID;
+                var area = queueArea.get(bufferID);
+    
+                for(var shape of shapesBack){
+                  if(shape.shapeID == bufferID){
+                    console.log("INSIDE VUFFERS")
+                    area.rect(shape.x, shape.y, shape.width, shape.height);
+                    canvasGlobal.strokeStyle = shape.stCo;
+                    canvasGlobal.lineWidth = shape.stWi;
+                    canvasGlobal.fillStyle = shape.fiCo;
+                    canvasGlobal.beginPath();
+                    canvasGlobal.rect(shape.x, shape.y, shape.width, shape.height);
+                    canvasGlobal.fill();
+                    canvasGlobal.font = "30px Arial";
+                    console.log(buffers[i].size.toString())
+                    canvasGlobal.fillText(buffers[i].size.toString(), shape.x, shape.y);
+                    canvasGlobal.stroke();
+                  }
+                }
+                area = null;
+              }
+              
+            }
+            
 
 
           });

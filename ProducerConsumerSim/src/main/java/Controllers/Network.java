@@ -81,7 +81,7 @@ public class Network {
     }
 
      void createStartingQueue(BufferQueue bufferQueue) throws Exception {
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 30; i++) {
             bufferQueue.enqueue(new Product(), this);
         }
     }
@@ -155,6 +155,9 @@ public class Network {
 
         try {
             this.createStartingQueue(this.bufferQueues.get("Queue999999"));
+
+            System.out.println(this.bufferQueues);
+            System.out.println(this.machines);
 
             for(Machine machine:machines){
                 for (BufferQueue nextQueue:machine.getNextBufferQueues()){

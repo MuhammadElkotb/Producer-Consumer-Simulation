@@ -16,7 +16,7 @@ public class BufferQueue {
         this.bufferID = bufferID;
         this.products = new ArrayList<>();
         this.manager = EventManager.getInstance();
-        this.manager.addListener((this.bufferID),new BufferQueueObserver());
+        this.manager.addListener(this.bufferID,new BufferQueueObserver());
     }
 
 

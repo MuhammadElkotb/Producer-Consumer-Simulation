@@ -23,7 +23,7 @@ public class Machine {
 
     public Machine(String machineName) {
         this.machineName = machineName;
-        this.serviceTime = ThreadLocalRandom.current().nextInt(1000, 20000);
+        this.serviceTime = ThreadLocalRandom.current().nextInt(1000, 5000);
         this.manager = EventManager.getInstance();
         manager.addListener(this.machineName,new MachineObserver(this.machineName));
     }
@@ -74,6 +74,7 @@ public class Machine {
                         try {
                             while (prevBufferQueue.getProducts().isEmpty()) {
                                 //System.out.println(this.machineName + " is ready ");
+                                product.setColor("darkred");
                                 manager.notify(this.machineName, network);
                                 object.wait();
                             }

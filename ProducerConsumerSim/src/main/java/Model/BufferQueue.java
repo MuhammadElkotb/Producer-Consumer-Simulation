@@ -10,6 +10,7 @@ public class BufferQueue {
     private ArrayList<Product> products;
     private String bufferID;
     private EventManager manager;
+    private int size;
 
     public BufferQueue(String bufferID){
         this.bufferID = bufferID;
@@ -30,6 +31,14 @@ public class BufferQueue {
         }
     }
 
+    public int getSize() {
+        return this.products.size();
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
     public void setProducts(ArrayList<Product> products) {
         this.products = products;
     }
@@ -39,7 +48,7 @@ public class BufferQueue {
     public synchronized void enqueue(Product product, Network network) throws Exception{
         synchronized (this){
             this.products.add(product);
-            this.manager.notify("Queue"+this.bufferID, network);
+           // this.manager.notify("Queue"+this.bufferID, network);
             this.notify();
         }
 
@@ -48,7 +57,7 @@ public class BufferQueue {
     public Product dequeue(Network network) throws Exception{
         synchronized (this){
             while(this.products.size() == 0) this.wait();
-            this.manager.notify("Queue"+this.bufferID, network);
+            //this.manager.notify("Queue"+this.bufferID, network);
             return this.products.remove(0);
         }
     }

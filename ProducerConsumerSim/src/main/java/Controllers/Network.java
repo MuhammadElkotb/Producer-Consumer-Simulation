@@ -14,9 +14,16 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Network {
     private ArrayList<Machine> machines;
-
     private ArrayList<BufferQueue> bufferQueues;
     private boolean onChange = false;
+
+    public ArrayList<Machine> getMachines() {
+        return this.machines;
+    }
+
+    public void setMachines(ArrayList<Machine> machines) {
+        this.machines = machines;
+    }
 
     public void flipChange(){
         this.onChange = !this.onChange;
@@ -27,17 +34,26 @@ public class Network {
     public boolean getChange(){
         return this.onChange;
     }
-    public Network(int n){
+
+    public Network(int n, int m){
         this.bufferQueues = new ArrayList<>();
         for(int i = 0; i < n; i++){
             this.bufferQueues.add(new BufferQueue(String.valueOf(i)));
         }
+        this.machines = new ArrayList<>();
+        for(int i = 0; i < m; i++){
+            this.machines.add(new Machine("Machine " + String.valueOf(i)));
+        }
     }
 
-    public ArrayList<BufferQueue> getBufferQueues() {
+    public ArrayList<Object> getNetwork() {
+        System.out.println("CHANGE -> " + this.getChange());
         if(this.getChange() == true){
             this.setChange(false);
-            return this.bufferQueues;
+            ArrayList<Object> ret = new ArrayList<>();
+            ret.add(this.machines);
+            ret.add(this.bufferQueues);
+            return ret;
         }
         else
             return null;
@@ -70,6 +86,7 @@ public class Network {
 
             }
         }
+
         System.out.println(modifiedForwardProductionNetwork.entrySet());
 
         for(productionNetworkElement key:backwardProductionNetwork.keySet()){
@@ -145,15 +162,12 @@ public class Network {
             System.out.println(this.bufferQueues.get(0).getProducts());
 
 
-            machine1.activate(this.bufferQueues.get(0), this.bufferQueues.get(1), this);
-            machine2.activate(this.bufferQueues.get(1), this.bufferQueues.get(2), this);
-            machine3.activate(this.bufferQueues.get(1), this.bufferQueues.get(2), this);
-            machine4.activate(this.bufferQueues.get(0), this.bufferQueues.get(3), this);
-            machine5.activate(this.bufferQueues.get(2), this.bufferQueues.get(4), this);
-            machine6.activate(this.bufferQueues.get(4), this.bufferQueues.get(5), this);
-            machine7.activate(this.bufferQueues.get(4), this.bufferQueues.get(5), this);
-            machine6.activate(this.bufferQueues.get(3), this.bufferQueues.get(5), this);
-            machine7.activate(this.bufferQueues.get(3), this.bufferQueues.get(5), this);
+            this.getMachines().get(0).activate(this.bufferQueues.get(0), this.bufferQueues.get((1)), this);
+            this.getMachines().get(1).activate(this.bufferQueues.get(1), this.bufferQueues.get((2)), this);
+            this.getMachines().get(2).activate(this.bufferQueues.get(2), this.bufferQueues.get((3)), this);
+            this.getMachines().get(3).activate(this.bufferQueues.get(3), this.bufferQueues.get((4)), this);
+            this.getMachines().get(4).activate(this.bufferQueues.get(4), this.bufferQueues.get((5)), this);
+
 
 
 

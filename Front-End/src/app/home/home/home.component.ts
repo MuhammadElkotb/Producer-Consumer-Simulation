@@ -198,15 +198,15 @@ export class HomeComponent {
   }
 
   play() {
-    this.server.play().subscribe();
+    var serv = this.server;
+    setInterval(function(){
+      serv.play().subscribe((x) => console.log(x));
+    }, 10)
   }
 
   getBuffer(){
 
-    var serv = this.server;
-    setInterval(function(){
-      serv.getBuffer().subscribe((x) => console.log(x));
-    }, 15)
+    
 
   }
 

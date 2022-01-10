@@ -17,6 +17,8 @@ public class Network {
 
 
     private HashMap<String,BufferQueue> bufferQueues;
+    private CareTaker careTaker;
+    private Orginator orginator;
 
     private boolean onChange = false;
 
@@ -41,7 +43,8 @@ public class Network {
     public Network(){
         this.bufferQueues = new HashMap<>();
         this.machines = new ArrayList<>();
-
+        this.careTaker = new CareTaker();
+        this.orginator = new Orginator();
 
     }
 
@@ -53,10 +56,20 @@ public class Network {
             ArrayList<Object> ret = new ArrayList<>();
             ret.add(this.machines);
             ret.add((ArrayList<BufferQueue>) this.bufferQueues.values());
+            this.orginator.setNetwork(ret);
+            this.careTaker.addSnapshot(this.orginator.saveNetworktoMemento());
             return ret;
         }
         else
             return null;
+    }
+    public ArrayList<Object> replay(){
+        ArrayList<Object> networks = new ArrayList<>();
+        for(int i=0; i < this.careTaker.getSize();i++){
+            this.orginator.getNetworkfromMemento(this.careTaker.getSnapshot(i));
+            networks.add(this.orginator.getNetwork());
+        }
+        return networks;
     }
 
 

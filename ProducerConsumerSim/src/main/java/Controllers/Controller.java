@@ -97,6 +97,10 @@ public class Controller {
         return network.getNetwork();
     }
 
+    @GetMapping("/replay")
+    ArrayList<Object> replay(){
+        return network.replay();
+    }
 
 
     /*@RequestMapping(value = "/play", method = RequestMethod.GET, produces = MediaType.TEXT_EVENT_STREAM_VALUE)

@@ -1,9 +1,8 @@
 package Controllers;
 
 
+import Model.*;
 import org.springframework.*;
-import Model.BufferQueue;
-import Model.ColorGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.ArrayType;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.MultiValueMapAdapter;
 import org.springframework.web.bind.annotation.*;
-import Model.productionNetworkElement;
 
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
@@ -40,7 +38,8 @@ import reactor.core.publisher.Flux;
 @CrossOrigin("http://localhost:4200")
 public class Controller {
 
-    Network network = new Network(6);
+    boolean started = false;
+    Network network = new Network();
     ArrayList<HashMap<String, String[]>> newProductionNetwork = new ArrayList<>();
     @PostMapping("/generateNetwork")
     String generateNetwork(@RequestBody String productionNetwork){
@@ -55,8 +54,7 @@ public class Controller {
             TypeFactory factory = TypeFactory.defaultInstance();
             ObjectMapper map = new ObjectMapper();
 
-            this.newProductionNetwork.add(map.readValue(productionNetwork, new TypeReference<HashMap<String, String[]>>() {
-            }));
+            this.newProductionNetwork.add(map.readValue(productionNetwork, new TypeReference<HashMap<String, String[]>>() {}));
 
 
             System.out.println(this.newProductionNetwork);
@@ -80,14 +78,23 @@ public class Controller {
     }
 
 
-    @GetMapping("/getBuffer")
-    ArrayList<BufferQueue> getBuffer(){
-        return network.getBufferQueues();
-    }
 
-    @PostMapping("/play")
-    void play(){
-        network.play();
+//    @GetMapping("/test")
+//    ArrayList<Machine> test(){
+//        Network newNet = new Network(5, 4);
+//        newNet.getMachines().get(0).setProduct(new Product());
+//        newNet.getMachines().get(1).setProduct(new Product());
+//        newNet.getMachines().get(2).setProduct(new Product());
+//        return newNet.getMachines();
+//    }
+
+    @GetMapping("/play")
+    ArrayList<Object> play(){
+        if(!started){
+            network.play();
+            started = true;
+        }
+        return network.getNetwork();
     }
 
 

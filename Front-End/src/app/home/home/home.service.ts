@@ -11,7 +11,7 @@ export class HomeService {
   }
 
   public play(){
-    return this.http.post("http://localhost:8080/play", null)
+    return this.http.get("http://localhost:8080/play")
   }
   public getBuffer() : Observable<string>{
 

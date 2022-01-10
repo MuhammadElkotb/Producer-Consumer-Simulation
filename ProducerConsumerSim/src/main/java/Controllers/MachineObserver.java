@@ -7,5 +7,8 @@ public class MachineObserver implements Observer{
     }
     public void update(){
     }
-    public void update(Network network){}
+    public void update(Network network){
+        System.out.println("INSIDE NOTIFY");
+        network.setChange(true);
+    }
 }

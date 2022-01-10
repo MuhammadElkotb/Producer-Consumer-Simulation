@@ -26,6 +26,22 @@ public class Machine {
         manager.addListener(this.machineName,new MachineObserver(this.machineName));
     }
 
+    public Product getProduct() {
+        return this.product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public long getServiceTime() {
+        return this.serviceTime;
+    }
+
+    public void setServiceTime(long serviceTime) {
+        this.serviceTime = serviceTime;
+    }
+
     public String getMachineName() {
         return machineName;
     }
@@ -56,12 +72,14 @@ public class Machine {
                         try {
                             while (prevBufferQueue.getProducts().isEmpty()) {
 
-                                System.out.println(this.machineName + " is ready ");
+                                //System.out.println(this.machineName + " is ready ");
                                 manager.notify(this.machineName, network);
                                 object.wait();
                             }
 
-                            product = prevBufferQueue.dequeue(network);
+                            this.setProduct(prevBufferQueue.dequeue(network));
+                            manager.notify(this.machineName, network);
+                            System.out.println(this.product);
                             consumed = true;
 
                             object.wait();
@@ -84,8 +102,7 @@ public class Machine {
                             if (!prevBufferQueue.getProducts().isEmpty() && !consumed) {
                                 object.notifyAll();
                             }
-                            while (consumed) {
-                                System.out.println("Servicing");
+                            while (consumed && product != null) {
                                 Thread.sleep(serviceTime);
                                 object.notifyAll();
                                 nextBufferQueue.enqueue(product, network);

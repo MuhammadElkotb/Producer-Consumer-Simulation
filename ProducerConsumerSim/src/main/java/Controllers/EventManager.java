@@ -24,7 +24,7 @@ public class EventManager {
     }
     public void notify(String concern, Network network) {
         if(concern.contains("Machine")) {
-            listeners.get(concern).update();
+            listeners.get(concern).update(network);
         }
         else if(concern.contains("Queue")){
             listeners.get(concern).update(network);

@@ -15,8 +15,18 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Network {
     private ArrayList<Machine> machines;
 
+
     private HashMap<String,BufferQueue> bufferQueues;
+
     private boolean onChange = false;
+
+    public ArrayList<Machine> getMachines() {
+        return this.machines;
+    }
+
+    public void setMachines(ArrayList<Machine> machines) {
+        this.machines = machines;
+    }
 
     public void flipChange(){
         this.onChange = !this.onChange;
@@ -27,16 +37,23 @@ public class Network {
     public boolean getChange(){
         return this.onChange;
     }
-    public Network(int n){
+
+    public Network(){
         this.bufferQueues = new HashMap<>();
         this.machines = new ArrayList<>();
 
+
     }
 
-    public ArrayList<BufferQueue> getBufferQueues() {
+    public ArrayList<Object> getNetwork() {
+        System.out.println("CHANGE -> " + this.getChange());
         if(this.getChange() == true){
             this.setChange(false);
-            return (ArrayList<BufferQueue>) this.bufferQueues.values();
+
+            ArrayList<Object> ret = new ArrayList<>();
+            ret.add(this.machines);
+            ret.add((ArrayList<BufferQueue>) this.bufferQueues.values());
+            return ret;
         }
         else
             return null;
@@ -129,8 +146,6 @@ public class Network {
 
         try {
 
-            
-            System.out.println(this.bufferQueues.get(0).getProducts());
             for(Machine machine:machines){
                 for (BufferQueue nextQueue:machine.getNextBufferQueues()){
                     for (BufferQueue prevQueue:machine.getPrevBufferQueues()){
@@ -138,6 +153,7 @@ public class Network {
                     }
                 }
             }
+
 
 
 

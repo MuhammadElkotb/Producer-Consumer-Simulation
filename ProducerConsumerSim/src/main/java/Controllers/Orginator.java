@@ -3,13 +3,13 @@ package Controllers;
 import java.util.ArrayList;
 
 public class Orginator {
-    private Object network ;
+    private ArrayList<Object> network ;
 
-    public void setNetwork(Object network) {
+    public void setNetwork(ArrayList<Object> network) {
         this.network = network;
     }
 
-    public Object getNetwork() {
+    public ArrayList<Object> getNetwork() {
         return network;
     }
 

@@ -1,12 +1,14 @@
 package Controllers;
 
-public class Memento {
-    private Object network;
+import java.util.ArrayList;
 
-    public Memento(Object network){
+public class Memento {
+    private ArrayList<Object> network;
+
+    public Memento(ArrayList<Object> network){
         this.network = network;
     }
-    public Object getNetwork() {
+    public ArrayList<Object> getNetwork() {
         return network;
     }
 }

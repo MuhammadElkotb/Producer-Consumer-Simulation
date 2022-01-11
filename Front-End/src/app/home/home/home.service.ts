@@ -22,5 +22,9 @@ export class HomeService {
   public stop() :Observable<string>{
     return this.http.get("http://localhost:8080/stop", {responseType:"text"});
   }
+  public replay() :Observable<Object[][]> {
+    return this.http.get<Object[][]>("http://localhost:8080/replay");
+
+  }
 
 }

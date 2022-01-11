@@ -52,23 +52,24 @@ public class Network {
     }
 
     public ArrayList<Object> getNetwork() {
+        ArrayList<Object> ret = new ArrayList<>();
         if(this.getChange() == true){
             this.setChange(false);
-            ArrayList<Object> ret = new ArrayList<>();
             ret.add(this.machines);
             ret.add(this.bufferQueues.values());
             this.machines.get(0).getProduct();
-            this.orginator.setNetwork(ret);
-            this.careTaker.addSnapshot(this.orginator.saveNetworktoMemento());
-
-            return ret;
         }
-        else
-            return null;
+        else{
+            ret = null;
+        }
+
+        this.orginator.setNetwork(ret);
+        this.careTaker.addSnapshot(this.orginator.saveNetworktoMemento());
+        return ret;
     }
 
-    public ArrayList<Object> replay(){
-        ArrayList<Object> networks = new ArrayList<>();
+    public ArrayList<ArrayList<Object>> replay(){
+        ArrayList<ArrayList<Object>> networks = new ArrayList<>();
         for(int i=0; i < this.careTaker.getSize();i++){
             this.orginator.getNetworkfromMemento(this.careTaker.getSnapshot(i));
             networks.add(this.orginator.getNetwork());

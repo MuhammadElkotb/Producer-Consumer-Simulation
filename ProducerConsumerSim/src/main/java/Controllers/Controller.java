@@ -85,7 +85,7 @@ public class Controller {
     }
 
     @GetMapping("/replay")
-    ArrayList<Object> replay(){
+    ArrayList<ArrayList<Object>> replay(){
         return network.replay();
     }
 

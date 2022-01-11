@@ -5,6 +5,7 @@ import Controllers.EventManager;
 import Controllers.Network;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class BufferQueue {
     private ArrayList<Product> products;
@@ -20,7 +21,10 @@ public class BufferQueue {
     }
     public BufferQueue copy(){
         BufferQueue newBuffer = new BufferQueue(this.bufferID);
-        newBuffer.products = this.products;
+
+        for(Product product:this.products){
+            newBuffer.products.add(product.copy());
+        }
         newBuffer.size = this.size;
         return newBuffer;
     }

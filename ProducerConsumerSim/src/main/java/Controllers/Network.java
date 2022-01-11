@@ -53,13 +53,21 @@ public class Network {
 
     public ArrayList<Object> getNetwork() {
         ArrayList<Object> ret = new ArrayList<>();
+        ArrayList<Machine> copiedMachines = new ArrayList<>();
+        ArrayList<BufferQueue> copiedBuffer = new ArrayList<>();
         ArrayList<Object> carry = new ArrayList<>();
         if(this.getChange() == true){
             this.setChange(false);
             ret.add(this.machines);
             ret.add(this.bufferQueues.values());
-            this.machines.get(0).getProduct();
-            carry = (ArrayList<Object>) ret.clone();
+            for(Machine machine:this.machines){
+                copiedMachines.add(machine.copy());
+            }
+            for(BufferQueue bufferQueue:this.bufferQueues.values()){
+                copiedBuffer.add(bufferQueue.copy());
+            }
+            carry.add(copiedMachines);
+            carry.add(copiedBuffer);
             this.orginator.setNetwork(carry);
             this.careTaker.addSnapshot(this.orginator.saveNetworktoMemento());
         }
@@ -87,7 +95,7 @@ public class Network {
     }
 
      void createStartingQueue(BufferQueue bufferQueue) throws Exception {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 50; i++) {
             bufferQueue.enqueue(new Product(), this);
         }
     }

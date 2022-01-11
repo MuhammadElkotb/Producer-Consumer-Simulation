@@ -27,6 +27,13 @@ public class Machine {
         this.manager = EventManager.getInstance();
         manager.addListener(this.machineName,new MachineObserver(this.machineName));
     }
+    public Machine copy(){
+        Machine newMachine = new Machine(this.machineName);
+        newMachine.product = this.product;
+        newMachine.serviceTime = this.serviceTime;
+        newMachine.consumed = this.consumed;
+        return newMachine;
+    }
 
     public Product getProduct() {
         return this.product;
@@ -74,8 +81,7 @@ public class Machine {
                         try {
                             while (prevBufferQueue.getProducts().isEmpty()) {
                                 //System.out.println(this.machineName + " is ready ");
-                                if(product != null)
-                                    product.setColor("darkred");
+                                product.setColor("darkred");
                                 manager.notify(this.machineName, network);
                                 object.wait();
                             }

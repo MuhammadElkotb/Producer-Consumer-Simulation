@@ -41,6 +41,9 @@ var lineButtonFlag : boolean = false;
 
 
 var tempType : string = "";
+var machineCounter : number = 0;
+var queueCounter : number = 0;
+
 
 //----------------------------------------------------------------------//
 
@@ -137,6 +140,7 @@ export class HomeComponent implements OnInit {
   stopReplay :boolean;
 
 
+
   placeElement(shape : shapeBack, fillcolor : string){
     var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
     var canvasGlobal = boardGlobal.getContext("2d")!;
@@ -169,7 +173,12 @@ export class HomeComponent implements OnInit {
           canvasGlobal.fillStyle = fiCo;
           canvasGlobal.arc(x, y, 0.5*width, 0, 2*Math.PI);
           canvasGlobal.fill();
+          canvasGlobal.font = "18px";
+          canvasGlobal.strokeText("M "+(machineCounter++).toString(), shape.x-(shape.width/8), shape.y);
+          canvasGlobal.textAlign="center";
+          canvasGlobal.textBaseline = "middle";
           canvasGlobal.stroke();
+
         }
         else{
           area.arc(x, y, 0.5*width, 0, 2*Math.PI);
@@ -195,7 +204,14 @@ export class HomeComponent implements OnInit {
           canvasGlobal.beginPath();
           canvasGlobal.rect(x, y, width, height);
           canvasGlobal.fill()
+          canvasGlobal.font = "18px";
+
+          canvasGlobal.strokeText("Q "+(queueCounter++).toString(), shape.x+(shape.width/2), shape.y+(shape.height/8));
+          canvasGlobal.textAlign="center";
+          canvasGlobal.textBaseline = "middle";
           canvasGlobal.stroke();
+
+
         }
         else{
           area.rect(x, y, width, height);
@@ -468,6 +484,7 @@ export class HomeComponent implements OnInit {
           is_filled : 1,
           stWi : 2,
           shapeID : "Machine".concat(get_new_ID())
+
           }
         createMachineFlag = false;
         createdMachine = true;

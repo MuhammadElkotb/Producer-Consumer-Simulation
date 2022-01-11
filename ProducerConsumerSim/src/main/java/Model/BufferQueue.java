@@ -19,9 +19,12 @@ public class BufferQueue {
         this.manager.addListener(this.bufferID,new BufferQueueObserver());
     }
 
-
-    public String getID() {
+    public String getBufferID() {
         return bufferID;
+    }
+
+    public void setBufferID(String bufferID) {
+        this.bufferID = bufferID;
     }
 
     public synchronized ArrayList<Product> getProducts() {

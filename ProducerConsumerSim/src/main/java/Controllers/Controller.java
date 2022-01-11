@@ -85,7 +85,7 @@ public class Controller {
 
     @GetMapping("/polling")
     ArrayList<Object> polling(){
-        System.out.println("lol");
+
         return network.getNetwork();
     }
 

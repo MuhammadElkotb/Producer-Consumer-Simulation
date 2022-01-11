@@ -20,14 +20,18 @@ public class BufferQueue {
     }
 
 
-    public String getID() {
+
+    public String getBufferID() {
         return bufferID;
+    }
+
+    public void setBufferID(String bufferID) {
+        this.bufferID = bufferID;
     }
 
     public synchronized ArrayList<Product> getProducts() {
         synchronized (this){
             return this.products;
-
         }
     }
 

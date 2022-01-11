@@ -60,7 +60,6 @@ public class Network {
             this.setChange(false);
             ret.add(this.machines);
             ret.add(this.bufferQueues.values());
-
             for(Machine machine:this.machines){
                 copiedMachines.add(machine.copy());
             }
@@ -96,7 +95,7 @@ public class Network {
     }
 
      void createStartingQueue(BufferQueue bufferQueue) throws Exception {
-        for (int i = 0; i < 500; i++) {
+        for (int i = 0; i < 50; i++) {
             bufferQueue.enqueue(new Product(), this);
         }
     }
@@ -156,12 +155,11 @@ public class Network {
             }
         }
         try{
-            this.createStartingQueue(this.bufferQueues.get("Queue999999"));
+            createStartingQueue(this.bufferQueues.get("Queue999999"));
         }
         catch (Exception e){
             e.printStackTrace();
         }
-
     }
     public void stop(){
         this.stop = true;
@@ -171,11 +169,12 @@ public class Network {
     public void play(){
 
         this.stop = false;
-//        InputThread inputThread = new InputThread();
-//        inputThread.addProduct(this.bufferQueues.get("Queue999999"));
+
 
         try {
 
+            //InputThread inputThread = new InputThread();
+            //inputThread.addProduct(this.bufferQueues.get("Queue999999"));
 
             for(Machine machine:machines){
                 for (BufferQueue nextQueue:machine.getNextBufferQueues()){

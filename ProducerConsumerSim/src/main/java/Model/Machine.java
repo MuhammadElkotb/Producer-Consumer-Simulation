@@ -81,8 +81,7 @@ public class Machine {
                         try {
                             while (prevBufferQueue.getProducts().isEmpty()) {
                                 //System.out.println(this.machineName + " is ready ");
-                                if(product != null)
-                                    product.setColor("darkred");
+                                product.setColor("darkred");
                                 manager.notify(this.machineName, network);
                                 object.wait();
                             }

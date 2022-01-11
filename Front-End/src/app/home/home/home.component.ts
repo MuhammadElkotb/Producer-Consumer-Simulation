@@ -632,7 +632,6 @@ run(){
   })
   ctr = 0;
   backwardProductionNetwork.forEach((key, value) => {
-
     temp[1].push([]);
     temp[1][ctr].push([]);
     temp[1][ctr].push([]);
@@ -643,6 +642,7 @@ run(){
     console.log("value ", value);
 
   })
+
   const convMap = Object.create(null)
   forwardProductionNetwork.forEach((val: string[], key: string) => {
     convMap[key] = val;
@@ -781,28 +781,28 @@ run(){
 }
 //----------------------------------------------------------------------//
 replay(){
+  clearInterval(this.playEvent);
     var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
     var canvasGlobal = boardGlobal.getContext("2d")!;
     this.stopReplay = false;
     this.server.replay().subscribe((snapshots : Object[][]) => {
-      for(var x of snapshots){
-        if(this.stopReplay){
-          break;
-        }
-        if(x != null){
+      console.log(snapshots);
+      let replayCtr = 0;
+       setInterval(function(){
+        if(snapshots[replayCtr] != null){
           canvasGlobal.clearRect(0,0,1380,675);
 
           let ctr = 0;
 
-          var machines : Machine[] = Object.assign(x[0]);
-          var buffers : Buffer[] = Object.assign(x[1]);
+          var machines : Machine[] = Object.assign(snapshots[replayCtr][0]);
+          var buffers : Buffer[] = Object.assign(snapshots[replayCtr][1]);
           console.log(buffers.length)
 
 
 
           for(let i = 0; i < machines.length; i++){
             var color;
-
+            
             try{
               color = machines[i].product.color;
             }
@@ -835,9 +835,7 @@ replay(){
 
             areaMachine = null;
           }
-
           ctr = 0;
-
           for(let i = 0; i < buffers.length; i++){
 
             var bufferID = buffers[i].bufferID;
@@ -897,8 +895,10 @@ replay(){
             lineArea = null;
           }
         }
-        delay(200);
-      }
+        replayCtr++;
+       }, 1) 
+        
+      
     });
 
 }

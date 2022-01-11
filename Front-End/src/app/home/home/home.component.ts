@@ -106,7 +106,29 @@ export interface Buffer {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
+
+  ngOnInit(): void {
+    var queue : shapeBack;
+
+    queue={
+      x : 3,
+      y : 3,
+      width : 90,
+      height : 50,
+      stCo : "white",
+      fiCo : "darkgreen",
+      type : "queue",
+      is_filled : 1,
+      stWi : 2,
+      shapeID : "Queue".concat(get_new_ID())
+      }
+      createQueueFlag =false;
+      createdQueue = true;
+      this.placeElement(queue, "");
+      shapesBack.push(queue);
+    
+  }
 
   title = 'Front-End';
   constructor(private server: HomeService) {}

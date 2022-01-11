@@ -18,6 +18,12 @@ public class BufferQueue {
         this.manager = EventManager.getInstance();
         this.manager.addListener(this.bufferID,new BufferQueueObserver());
     }
+    public BufferQueue copy(){
+        BufferQueue newBuffer = new BufferQueue(this.bufferID);
+        newBuffer.products = this.products;
+        newBuffer.size = this.size;
+        return newBuffer;
+    }
 
 
     public String getBufferID() {

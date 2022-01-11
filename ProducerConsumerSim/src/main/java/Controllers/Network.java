@@ -53,18 +53,31 @@ public class Network {
 
     public ArrayList<Object> getNetwork() {
         ArrayList<Object> ret = new ArrayList<>();
+        ArrayList<Machine> copiedMachines = new ArrayList<>();
+        ArrayList<BufferQueue> copiedBuffer = new ArrayList<>();
+        ArrayList<Object> carry = new ArrayList<>();
         if(this.getChange() == true){
             this.setChange(false);
             ret.add(this.machines);
             ret.add(this.bufferQueues.values());
-            this.machines.get(0).getProduct();
+
+            for(Machine machine:this.machines){
+                copiedMachines.add(machine.copy());
+            }
+            for(BufferQueue bufferQueue:this.bufferQueues.values()){
+                copiedBuffer.add(bufferQueue.copy());
+            }
+            carry.add(copiedMachines);
+            carry.add(copiedBuffer);
+            this.orginator.setNetwork(carry);
+            this.careTaker.addSnapshot(this.orginator.saveNetworktoMemento());
         }
         else{
             ret = null;
+            this.orginator.setNetwork(ret);
+            this.careTaker.addSnapshot(this.orginator.saveNetworktoMemento());
         }
 
-        this.orginator.setNetwork(ret);
-        this.careTaker.addSnapshot(this.orginator.saveNetworktoMemento());
         return ret;
     }
 

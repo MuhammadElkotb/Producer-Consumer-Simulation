@@ -27,6 +27,13 @@ public class Machine {
         this.manager = EventManager.getInstance();
         manager.addListener(this.machineName,new MachineObserver(this.machineName));
     }
+    public Machine copy(){
+        Machine newMachine = new Machine(this.machineName);
+        newMachine.product = this.product;
+        newMachine.serviceTime = this.serviceTime;
+        newMachine.consumed = this.consumed;
+        return newMachine;
+    }
 
     public Product getProduct() {
         return this.product;

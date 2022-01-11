@@ -77,6 +77,7 @@ export interface shapeBack{
   type:string;
   is_filled:number;
   shapeID:string;
+  order:number;
 }
 
 export interface elementsMap {
@@ -119,17 +120,19 @@ export class HomeComponent implements OnInit {
       y : 3,
       width : 90,
       height : 50,
-      stCo : "white",
+      stCo : "black",
       fiCo : "darkgreen",
       type : "queue",
       is_filled : 1,
       stWi : 2,
-      shapeID : "Queue".concat(get_new_ID())
+      shapeID : "Queue".concat(get_new_ID()),
+      order:queueCounter
       }
       createQueueFlag =false;
       createdQueue = true;
       this.placeElement(queue, "");
       shapesBack.push(queue);
+      queueCounter++;
 
   }
 
@@ -155,6 +158,7 @@ export class HomeComponent implements OnInit {
     var isfilled = shape.is_filled;
     var type = shape.type;
     var ID = shape.shapeID;
+    var order = shape.order
 
 
 
@@ -173,8 +177,8 @@ export class HomeComponent implements OnInit {
           canvasGlobal.fillStyle = fiCo;
           canvasGlobal.arc(x, y, 0.5*width, 0, 2*Math.PI);
           canvasGlobal.fill();
-          canvasGlobal.font = "18px";
-          canvasGlobal.strokeText("M "+(100000 - Number(shape.shapeID)).toString(), shape.x-(shape.width/8), shape.y);
+          canvasGlobal.font = "1 20px arial";
+          canvasGlobal.strokeText("M "+(order).toString(), shape.x-(shape.width/30), shape.y);
           canvasGlobal.textAlign="center";
           canvasGlobal.textBaseline = "middle";
           canvasGlobal.stroke();
@@ -204,9 +208,8 @@ export class HomeComponent implements OnInit {
           canvasGlobal.beginPath();
           canvasGlobal.rect(x, y, width, height);
           canvasGlobal.fill()
-          canvasGlobal.font = "18px";
-
-          canvasGlobal.strokeText("Q "+(100000 - Number(shape.shapeID)).toString(), shape.x+(shape.width/2), shape.y+(shape.height/8));
+          canvasGlobal.font = "1 20px arial";
+          canvasGlobal.strokeText("Q "+(order).toString(), shape.x+(shape.width/2), shape.y+(shape.height/4));
           canvasGlobal.textAlign="center";
           canvasGlobal.textBaseline = "middle";
           canvasGlobal.stroke();
@@ -299,7 +302,8 @@ export class HomeComponent implements OnInit {
                     type : "line",
                     is_filled : 1,
                     stWi : 0.60,
-                    shapeID : get_new_ID()
+                    shapeID : get_new_ID(),
+                    order:0
                     }
                     selectLine = true;
                     createdLine = true
@@ -320,7 +324,8 @@ export class HomeComponent implements OnInit {
                     type : "line",
                     is_filled : 1,
                     stWi : 0.60,
-                    shapeID : get_new_ID()
+                    shapeID : get_new_ID(),
+                    order:0
                     }
                     selectLine = true;
                     createdLine = true
@@ -478,12 +483,13 @@ export class HomeComponent implements OnInit {
           y : e.offsetY,
           width : 60,
           height : 60,
-          stCo : "white",
+          stCo : "black",
           type : "machine",
           fiCo : "darkred",
           is_filled : 1,
           stWi : 2,
-          shapeID : "Machine".concat(get_new_ID())
+          shapeID : "Machine".concat(get_new_ID()),
+          order :machineCounter
 
           }
         createMachineFlag = false;
@@ -491,6 +497,7 @@ export class HomeComponent implements OnInit {
         console.log(machine);
         this.placeElement(machine, "");
         shapesBack.push(machine);
+        machineCounter++;
         }
 
     });
@@ -542,17 +549,19 @@ export class HomeComponent implements OnInit {
           y :e.offsetY,
           width : 90,
           height : 50,
-          stCo : "white",
+          stCo : "black",
           fiCo : "darkgreen",
           type : "queue",
           is_filled : 1,
           stWi : 2,
-          shapeID : "Queue".concat(get_new_ID())
+          shapeID : "Queue".concat(get_new_ID()),
+          order:queueCounter
           }
           createQueueFlag =false;
           createdQueue = true;
           this.placeElement(queue, "");
           shapesBack.push(queue);
+          queueCounter++;
         }
 
     });
@@ -690,6 +699,10 @@ run(){
                       canvasGlobal.arc(shape.x, shape.y, 0.5*shape.width, 0, 2*Math.PI);
                       canvasGlobal.fill();
                       canvasGlobal.stroke();
+                      canvasGlobal.font = "1 20px arial";
+                      canvasGlobal.strokeText("M "+(shape.order).toString(), shape.x-(shape.width/30), shape.y);
+                      canvasGlobal.textAlign="center";
+                      canvasGlobal.textBaseline = "middle";
                       machineArea.set(machineID, areaMachine);
                     }
                   }
@@ -714,10 +727,10 @@ run(){
                       canvasGlobal.fillStyle = "rgb(0,100,0)"
                       canvasGlobal.beginPath();
                       canvasGlobal.rect(shape.x, shape.y, shape.width, shape.height)
-                      canvasGlobal.font = "25px Arial";
                       canvasGlobal.fill();
                       canvasGlobal.stroke();
-
+                      canvasGlobal.font = "1 20px arial";
+                      canvasGlobal.strokeText("Q "+(shape.order).toString(), shape.x+(shape.width/2), shape.y+(shape.height/8));
                       canvasGlobal.strokeText(buffers[i].size.toString(), shape.x+(shape.width/2), shape.y+(shape.height/2));
                       canvasGlobal.textAlign="center";
                       canvasGlobal.textBaseline = "middle";
@@ -812,6 +825,10 @@ replay(){
                 canvasGlobal.arc(shape.x, shape.y, 0.5*shape.width, 0, 2*Math.PI);
                 canvasGlobal.fill();
                 canvasGlobal.stroke();
+                canvasGlobal.font = "1 20px arial";
+                canvasGlobal.strokeText("M "+(shape.order).toString(), shape.x-(shape.width/30), shape.y);
+                canvasGlobal.textAlign="center";
+                canvasGlobal.textBaseline = "middle";
                 machineArea.set(machineID, areaMachine);
               }
             }
@@ -836,10 +853,10 @@ replay(){
                 canvasGlobal.fillStyle = "rgb(0,100,0)"
                 canvasGlobal.beginPath();
                 canvasGlobal.rect(shape.x, shape.y, shape.width, shape.height)
-                canvasGlobal.font = "25px Arial";
                 canvasGlobal.fill();
                 canvasGlobal.stroke();
-
+                canvasGlobal.font = "1 20px arial";
+                canvasGlobal.strokeText("Q "+(shape.order).toString(), shape.x+(shape.width/2), shape.y+(shape.height/8));
                 canvasGlobal.strokeText(buffers[i].size.toString(), shape.x+(shape.width/2), shape.y+(shape.height/2));
                 canvasGlobal.textAlign="center";
                 canvasGlobal.textBaseline = "middle";

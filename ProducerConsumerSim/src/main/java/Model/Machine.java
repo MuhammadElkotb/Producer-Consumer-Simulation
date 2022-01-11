@@ -81,9 +81,13 @@ public class Machine {
                         try {
                             while (prevBufferQueue.getProducts().isEmpty()) {
                                 //System.out.println(this.machineName + " is ready ");
-                                product.setColor("darkred");
+
+
                                 manager.notify(this.machineName, network);
+
                                 object.wait();
+
+
                             }
 
                             this.setProduct(prevBufferQueue.dequeue(network));
@@ -115,8 +119,9 @@ public class Machine {
                             }
                             while (consumed && product != null) {
                                 Thread.sleep(serviceTime);
-                                object.notifyAll();
                                 nextBufferQueue.enqueue(product, network);
+                                object.notifyAll();
+                                this.setProduct(null);
                                 consumed = false;
                                 object.wait();
                             }

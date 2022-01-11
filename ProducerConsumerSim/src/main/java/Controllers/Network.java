@@ -95,7 +95,7 @@ public class Network {
     }
 
      void createStartingQueue(BufferQueue bufferQueue) throws Exception {
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 100; i++) {
             bufferQueue.enqueue(new Product(), this);
         }
     }

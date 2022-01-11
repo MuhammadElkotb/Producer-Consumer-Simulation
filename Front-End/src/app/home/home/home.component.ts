@@ -654,7 +654,9 @@ run(){
           var canvasGlobal = boardGlobal.getContext("2d")!;
           this.playEvent = setInterval(function(this:any){
             serv.polling().subscribe((x : Object[]) => {
-              if(x != null){
+
+              if(x != null ){
+                console.log(x[0]);
                 canvasGlobal.clearRect(0,0,1380,675);
 
                 let ctr = 0;
@@ -672,6 +674,9 @@ run(){
                     color = machines[i].product.color;
                   }
                   catch(e){
+                    color = "darkred"
+                  }
+                  if(color == "null"){
                     color = "darkred"
                   }
                   var machineID = machines[i].machineName;

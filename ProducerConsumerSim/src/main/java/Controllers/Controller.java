@@ -39,6 +39,7 @@ import reactor.core.publisher.Flux;
 public class Controller {
 
 
+    boolean started = false;
     Network network ;
     ArrayList<HashMap<String, String[]>> newProductionNetwork = new ArrayList<>();
     @PostMapping("/generateNetwork")
@@ -56,7 +57,6 @@ public class Controller {
             this.newProductionNetwork.add(map.readValue(productionNetwork, new TypeReference<HashMap<String, String[]>>() {}));
 
 
-            System.out.println(this.newProductionNetwork);
             if (this.newProductionNetwork.size() == 2) {
                 network.initialize(newProductionNetwork.get(0), newProductionNetwork.get(1));
             }
@@ -66,11 +66,7 @@ public class Controller {
             e.printStackTrace();
             return(e.getMessage());
         }
-
     }
-
-
-
 
 
     @GetMapping("/play")
@@ -85,7 +81,6 @@ public class Controller {
 
     @GetMapping("/polling")
     ArrayList<Object> polling(){
-
         return network.getNetwork();
     }
 
@@ -97,24 +92,9 @@ public class Controller {
     @GetMapping("/stop")
     String stop(){
         network.stop();
+        started = false;
         return ("SYSTEM WAS STOPPED SUCCESSFULLY");
     }
-
-    /*@RequestMapping(value = "/play", method = RequestMethod.GET, produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ArrayList<BufferQueue>> getBuffers(){
-        network.play();
-        System.out.println("lol");
-        bufferQueues = network.getBufferQueues();
-        Flux<ArrayList<BufferQueue>> ret = networkService.getBuffers(bufferQueues, network);
-        return ret;
-
-    }*/
-
-
-
-
-
-
 
 
 

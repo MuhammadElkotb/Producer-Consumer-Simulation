@@ -1,7 +1,7 @@
 package Model;
 
 public class Product {
-    private String color;
+    private String color = "black";
 
 
     public Product(){

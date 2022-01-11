@@ -111,6 +111,8 @@ export class HomeComponent {
   title = 'Front-End';
   constructor(private server: HomeService) {}
 
+  playEvent : any;
+
 
   placeElement(shape : shapeBack, fillcolor : string){
     var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
@@ -263,7 +265,7 @@ export class HomeComponent {
                     fiCo : "black",
                     type : "line",
                     is_filled : 1,
-                    stWi : 1,
+                    stWi : 0.60,
                     shapeID : get_new_ID()
                     }
                     selectLine = true;
@@ -284,7 +286,7 @@ export class HomeComponent {
                     fiCo : "black",
                     type : "line",
                     is_filled : 1,
-                    stWi : 1,
+                    stWi : 0.60,
                     shapeID : get_new_ID()
                     }
                     selectLine = true;
@@ -553,7 +555,8 @@ export class HomeComponent {
     machineArea.clear();
     queueArea.clear();
     shapesBack = [];
-    shapesBack = []
+    forwardProductionNetwork.clear();    
+    backwardProductionNetwork.clear();    
   }
 
 //----------------------------------------------------------------------//
@@ -614,73 +617,122 @@ run(){
   console.log(JSON.stringify(temp))
   this.server.generateNetwork(JSON.stringify(convMap)).subscribe((data)=>{
     this.server.generateNetwork(JSON.stringify(convMap2)).subscribe((data)=>{
-      this.server.play().subscribe((data)=>{
-        var serv = this.server;
-        var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
-        var canvasGlobal = boardGlobal.getContext("2d")!;
-        setInterval(function(){
-          serv.polling().subscribe((x : Object[]) => {
-            if(x != null){
-
-              var machines : Machine[] = Object.assign(x[0]);
-              var buffers : Buffer[] = Object.assign(x[1]);
-              console.log(buffers.length)
-    
-              
-    
-              for(let i = 0; i < machines.length; i++){
-                console.log(machines[i].product.color);
-                var color = machines[i].product.color;
-                var machineID = machines[i].machineName;
-                var area = machineArea.get(machineID);
+        this.server.play().subscribe((data)=>{
+          var serv = this.server;
+          var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
+          var canvasGlobal = boardGlobal.getContext("2d")!;
+          this.playEvent = setInterval(function(this:any){
+            serv.polling().subscribe((x : Object[]) => {
+              if(x != null){
+                canvasGlobal.clearRect(0,0,1380,675);
+  
+                let ctr = 0;
+  
+                var machines : Machine[] = Object.assign(x[0]);
+                var buffers : Buffer[] = Object.assign(x[1]);
+                console.log(buffers.length)
+      
                 
-    
-                for(var shape of shapesBack){
-                  if(shape.shapeID == machineID){
-                    area.arc(shape.x, shape.y, 0.5*shape.width, 0, 2*Math.PI);
-                    canvasGlobal.beginPath();
-                    canvasGlobal.strokeStyle = shape.stCo;
-                    canvasGlobal.lineWidth = shape.stWi;
-                    canvasGlobal.fillStyle = color;
-                    canvasGlobal.arc(shape.x, shape.y, 0.5*shape.width, 0, 2*Math.PI);
-                    canvasGlobal.fill();
-                    canvasGlobal.stroke();
+      
+                for(let i = 0; i < machines.length; i++){
+                  var color;
+  
+                  try{
+                    color = machines[i].product.color;
                   }
-                }
-                area = null;
-              }
-    
-              for(let i = 0; i < buffers.length; i++){
-        
-                var bufferID = buffers[i].bufferID;
-                var area = queueArea.get(bufferID);
-    
-                for(var shape of shapesBack){
-                  if(shape.shapeID == bufferID){
-                    console.log("INSIDE VUFFERS")
-                    area.rect(shape.x, shape.y, shape.width, shape.height);
-                    canvasGlobal.strokeStyle = shape.stCo;
-                    canvasGlobal.lineWidth = shape.stWi;
-                    canvasGlobal.fillStyle = shape.fiCo;
-                    canvasGlobal.beginPath();
-                    canvasGlobal.rect(shape.x, shape.y, shape.width, shape.height);
-                    canvasGlobal.fill();
-                    canvasGlobal.font = "30px Arial";
-                    console.log(buffers[i].size.toString())
-                    canvasGlobal.fillText(buffers[i].size.toString(), shape.x, shape.y);
-                    canvasGlobal.stroke();
+                  catch(e){
+                    color = "darkred"
                   }
+                  var machineID = machines[i].machineName;
+                  var areaMachine = machineArea.get(machineID);
+  
+                  
+                 
+                  for(var shape of shapesBack){
+  
+                    ctr++;
+                    if(shape.shapeID == machineID){
+                      areaMachine.arc(shape.x, shape.y, 0.5*shape.width, 0, 2*Math.PI);
+                      canvasGlobal.beginPath();
+                      canvasGlobal.strokeStyle = shape.stCo;
+                      canvasGlobal.lineWidth = shape.stWi;
+                      canvasGlobal.fillStyle = color;
+                      canvasGlobal.arc(shape.x, shape.y, 0.5*shape.width, 0, 2*Math.PI);
+                      canvasGlobal.fill();
+                      canvasGlobal.stroke();
+                      machineArea.set(machineID, areaMachine);
+                    }
+                  }
+  
+                  areaMachine = null;
                 }
-                area = null;
+      
+                ctr = 0;
+  
+                for(let i = 0; i < buffers.length; i++){
+          
+                  var bufferID = buffers[i].bufferID;
+                  var areaBuffer = queueArea.get(bufferID);
+  
+                  console.log(bufferID);
+                  for(var shape of shapesBack){
+                    ctr++;
+                    if(shape.shapeID == bufferID){
+                      areaBuffer.rect(shape.x, shape.y, shape.width, shape.height);
+                      canvasGlobal.strokeStyle = shape.stCo;
+                      canvasGlobal.lineWidth = shape.stWi;
+                      canvasGlobal.fillStyle = "rgb(0,100,0)"
+                      canvasGlobal.beginPath();                
+                      canvasGlobal.rect(shape.x, shape.y, shape.width, shape.height)
+                      canvasGlobal.font = "25px Arial";
+                      canvasGlobal.fill();
+                      canvasGlobal.stroke();
+  
+                      canvasGlobal.strokeText(buffers[i].size.toString(), shape.x+(shape.width/2), shape.y+(shape.height/2));
+                      canvasGlobal.textAlign="center"; 
+                      canvasGlobal.textBaseline = "middle";
+  
+                      queueArea.set(bufferID, areaBuffer);
+                    }
+                    
+                  }
+                  areaBuffer = null;
+                }
               }
-              
-            }
-            
-
-
-          });
-        }, 10)
-      });
+  
+              for(var shape of shapesBack){
+                if(shape.type == "line"){
+                  var lineArea = new Path2D();
+                  lineArea.moveTo(shape.x, shape.y);
+                  lineArea.lineTo(shape.width, shape.height);
+                  lineArea.closePath;
+                  canvasGlobal.beginPath();
+                  canvasGlobal.strokeStyle = shape.stCo;
+                  canvasGlobal.lineWidth = shape.stWi;
+                  canvasGlobal.moveTo(shape.x, shape.y);
+                  canvasGlobal.lineTo(shape.width, shape.height);
+                  canvasGlobal.closePath();
+                  canvasGlobal.stroke();
+                  var angle=Math.PI+Math.atan2(shape.height-shape.y,shape.width-shape.x);
+                  var angle1=angle+Math.PI/6;
+                  var angle2=angle-Math.PI/6;
+                  canvasGlobal.beginPath();
+                  canvasGlobal.strokeStyle = shape.stCo;
+                  canvasGlobal.lineWidth = shape.stWi;
+                  canvasGlobal.fillStyle = "white"
+                  canvasGlobal.moveTo(shape.width,shape.height);
+                  canvasGlobal.arc(shape.width,shape.height,20,angle1,angle2,true);
+                  canvasGlobal.lineTo(shape.width,shape.height);
+                  canvasGlobal.fill();
+                  canvasGlobal.closePath();
+                  lineArea = null;
+                }
+                
+              }
+  
+            });
+          }, 1)
+        });      
     });
   });
 }
@@ -689,6 +741,7 @@ run(){
 stop(){
   this.server.stop().subscribe((data:string)=>{
     console.log(data)
+    clearInterval(this.playEvent)
 
   });
 }

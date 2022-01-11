@@ -19,6 +19,7 @@ public class BufferQueue {
         this.manager.addListener(this.bufferID,new BufferQueueObserver());
     }
 
+
     public String getBufferID() {
         return bufferID;
     }
@@ -30,7 +31,6 @@ public class BufferQueue {
     public synchronized ArrayList<Product> getProducts() {
         synchronized (this){
             return this.products;
-
         }
     }
 

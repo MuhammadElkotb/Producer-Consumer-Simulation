@@ -74,14 +74,14 @@ public class Machine {
                         try {
                             while (prevBufferQueue.getProducts().isEmpty()) {
                                 //System.out.println(this.machineName + " is ready ");
-                                product.setColor("darkred");
+                                if(product != null)
+                                    product.setColor("darkred");
                                 manager.notify(this.machineName, network);
                                 object.wait();
                             }
 
                             this.setProduct(prevBufferQueue.dequeue(network));
                             manager.notify(this.machineName, network);
-                            System.out.println(this.product);
                             consumed = true;
 
                             object.wait();

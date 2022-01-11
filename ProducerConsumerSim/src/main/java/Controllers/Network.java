@@ -57,9 +57,10 @@ public class Network {
             ArrayList<Object> ret = new ArrayList<>();
             ret.add(this.machines);
             ret.add(this.bufferQueues.values());
+            this.machines.get(0).getProduct();
             this.orginator.setNetwork(ret);
             this.careTaker.addSnapshot(this.orginator.saveNetworktoMemento());
-            System.out.println(ret);
+
             return ret;
         }
         else
@@ -81,7 +82,7 @@ public class Network {
     }
 
      void createStartingQueue(BufferQueue bufferQueue) throws Exception {
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 500; i++) {
             bufferQueue.enqueue(new Product(), this);
         }
     }
@@ -100,7 +101,6 @@ public class Network {
                     queues.add(queue);
                     this.addBufferQueue(valueElement,queue);
                 }
-
             }
             machine.setNextBufferQueues(queues);
             this.machines.add(machine);
@@ -141,6 +141,13 @@ public class Network {
                 }
             }
         }
+        try{
+            this.createStartingQueue(this.bufferQueues.get("Queue999999"));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
     public void stop(){
         this.stop = true;
@@ -154,20 +161,16 @@ public class Network {
 //        inputThread.addProduct(this.bufferQueues.get("Queue999999"));
 
         try {
-            this.createStartingQueue(this.bufferQueues.get("Queue999999"));
 
-            System.out.println(this.bufferQueues);
-            System.out.println(this.machines);
 
             for(Machine machine:machines){
                 for (BufferQueue nextQueue:machine.getNextBufferQueues()){
                     for (BufferQueue prevQueue:machine.getPrevBufferQueues()){
-
                         machine.activate(prevQueue,nextQueue,this);
-
                     }
                 }
             }
+            System.out.println("LOLOLOL");
 
         }
         catch (Exception e){

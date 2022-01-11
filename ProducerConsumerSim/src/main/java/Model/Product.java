@@ -7,6 +7,11 @@ public class Product {
     public Product(){
         this.color = ColorGenerator.generate();
     }
+    public Product copy(){
+        Product newProduct = new Product();
+        newProduct.color = this.color;
+        return newProduct;
+    }
     public String getColor() {
         return this.color;
     }

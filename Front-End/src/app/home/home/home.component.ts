@@ -130,7 +130,7 @@ export class HomeComponent implements OnInit {
       createdQueue = true;
       this.placeElement(queue, "");
       shapesBack.push(queue);
-    
+
   }
 
   title = 'Front-End';
@@ -174,7 +174,7 @@ export class HomeComponent implements OnInit {
           canvasGlobal.arc(x, y, 0.5*width, 0, 2*Math.PI);
           canvasGlobal.fill();
           canvasGlobal.font = "18px";
-          canvasGlobal.strokeText("M "+(machineCounter++).toString(), shape.x-(shape.width/8), shape.y);
+          canvasGlobal.strokeText("M "+(100000 - Number(shape.shapeID)).toString(), shape.x-(shape.width/8), shape.y);
           canvasGlobal.textAlign="center";
           canvasGlobal.textBaseline = "middle";
           canvasGlobal.stroke();
@@ -206,7 +206,7 @@ export class HomeComponent implements OnInit {
           canvasGlobal.fill()
           canvasGlobal.font = "18px";
 
-          canvasGlobal.strokeText("Q "+(queueCounter++).toString(), shape.x+(shape.width/2), shape.y+(shape.height/8));
+          canvasGlobal.strokeText("Q "+(100000 - Number(shape.shapeID)).toString(), shape.x+(shape.width/2), shape.y+(shape.height/8));
           canvasGlobal.textAlign="center";
           canvasGlobal.textBaseline = "middle";
           canvasGlobal.stroke();

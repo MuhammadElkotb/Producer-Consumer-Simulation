@@ -53,18 +53,22 @@ public class Network {
 
     public ArrayList<Object> getNetwork() {
         ArrayList<Object> ret = new ArrayList<>();
+        ArrayList<Object> carry = new ArrayList<>();
         if(this.getChange() == true){
             this.setChange(false);
             ret.add(this.machines);
             ret.add(this.bufferQueues.values());
             this.machines.get(0).getProduct();
+            carry = (ArrayList<Object>) ret.clone();
+            this.orginator.setNetwork(carry);
+            this.careTaker.addSnapshot(this.orginator.saveNetworktoMemento());
         }
         else{
             ret = null;
+            this.orginator.setNetwork(ret);
+            this.careTaker.addSnapshot(this.orginator.saveNetworktoMemento());
         }
 
-        this.orginator.setNetwork(ret);
-        this.careTaker.addSnapshot(this.orginator.saveNetworktoMemento());
         return ret;
     }
 
@@ -83,7 +87,7 @@ public class Network {
     }
 
      void createStartingQueue(BufferQueue bufferQueue) throws Exception {
-        for (int i = 0; i < 500; i++) {
+        for (int i = 0; i < 100; i++) {
             bufferQueue.enqueue(new Product(), this);
         }
     }
@@ -143,12 +147,11 @@ public class Network {
             }
         }
         try{
-            this.createStartingQueue(this.bufferQueues.get("Queue999999"));
+            createStartingQueue(this.bufferQueues.get("Queue999999"));
         }
         catch (Exception e){
             e.printStackTrace();
         }
-
     }
     public void stop(){
         this.stop = true;
@@ -158,11 +161,12 @@ public class Network {
     public void play(){
 
         this.stop = false;
-//        InputThread inputThread = new InputThread();
-//        inputThread.addProduct(this.bufferQueues.get("Queue999999"));
+
 
         try {
 
+            //InputThread inputThread = new InputThread();
+            //inputThread.addProduct(this.bufferQueues.get("Queue999999"));
 
             for(Machine machine:machines){
                 for (BufferQueue nextQueue:machine.getNextBufferQueues()){

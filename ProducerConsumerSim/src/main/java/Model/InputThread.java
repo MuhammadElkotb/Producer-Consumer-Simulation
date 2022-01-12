@@ -9,7 +9,7 @@ public class InputThread {
 
     public void addProduct(BufferQueue bufferQueue){
         Runnable input = () -> {
-            int inputProduts = ThreadLocalRandom.current().nextInt(30, 200);
+            int inputProduts = ThreadLocalRandom.current().nextInt(30, 500);
             int ctr = 0;
             while(true){
                 synchronized (this){

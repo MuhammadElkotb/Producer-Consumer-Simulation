@@ -154,12 +154,12 @@ public class Network {
                 }
             }
         }
-        try{
+       /* try{
             createStartingQueue(this.bufferQueues.get("Queue999999"));
         }
         catch (Exception e){
             e.printStackTrace();
-        }
+        }*/
     }
     public void stop(){
         this.stop = true;
@@ -173,8 +173,10 @@ public class Network {
 
         try {
 
-            //InputThread inputThread = new InputThread();
-            //inputThread.addProduct(this.bufferQueues.get("Queue999999"));
+            System.out.println("CALLED PLAY");
+
+            InputThread inputThread = new InputThread();
+            inputThread.addProduct(this.bufferQueues.get("Queue999999"));
 
             for(Machine machine:machines){
                 for (BufferQueue nextQueue:machine.getNextBufferQueues()){
@@ -183,7 +185,6 @@ public class Network {
                     }
                 }
             }
-            System.out.println("LOLOLOL");
 
         }
         catch (Exception e){

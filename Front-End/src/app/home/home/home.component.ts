@@ -133,6 +133,9 @@ export class HomeComponent implements OnInit {
       this.placeElement(queue, "");
       shapesBack.push(queue);
       queueCounter++;
+      for(var i = 0; i < shapesBack.length; i++){
+        this.placeElement(shapesBack[i], "");
+      }
 
   }
 
@@ -140,6 +143,7 @@ export class HomeComponent implements OnInit {
   constructor(private server: HomeService) {}
 
   playEvent : any;
+  replayEvent : any;
   stopReplay :boolean;
 
 
@@ -177,10 +181,9 @@ export class HomeComponent implements OnInit {
           canvasGlobal.fillStyle = fiCo;
           canvasGlobal.arc(x, y, 0.5*width, 0, 2*Math.PI);
           canvasGlobal.fill();
-          canvasGlobal.font = "1 20px arial";
-          canvasGlobal.strokeText("M "+(order).toString(), shape.x-(shape.width/30), shape.y);
+          canvasGlobal.font = "icon";
+          canvasGlobal.strokeText("M "+(order).toString(), shape.x-(shape.width/30) + 3, shape.y + 1);
           canvasGlobal.textAlign="center";
-          canvasGlobal.textBaseline = "middle";
           canvasGlobal.stroke();
 
         }
@@ -208,10 +211,17 @@ export class HomeComponent implements OnInit {
           canvasGlobal.beginPath();
           canvasGlobal.rect(x, y, width, height);
           canvasGlobal.fill()
-          canvasGlobal.font = "1 20px arial";
-          canvasGlobal.strokeText("Q "+(order).toString(), shape.x+(shape.width/2), shape.y+(shape.height/4));
+          canvasGlobal.font = "icon";
           canvasGlobal.textAlign="center";
-          canvasGlobal.textBaseline = "middle";
+
+          if(ID == "Queue999999"){
+            console.log("asdasd")
+            canvasGlobal.strokeText("Q 0", shape.x + (shape.width/2), shape.y + (shape.height/8) + 8);
+          }
+          else{
+            canvasGlobal.strokeText("Q "+(order).toString(), shape.x+(shape.width/2), shape.y+(shape.height/4) + 3);
+          }
+          
           canvasGlobal.stroke();
 
 
@@ -248,7 +258,7 @@ export class HomeComponent implements OnInit {
           canvasGlobal.fillStyle = "white"
           canvasGlobal.moveTo(width,height);
           canvasGlobal.arc(width,height,20,angle1,angle2,true);
-          canvasGlobal.lineTo(width,height);
+          canvasGlobal.lineTo(width ,height);
           canvasGlobal.fill();
           canvasGlobal.closePath();
 
@@ -367,6 +377,26 @@ export class HomeComponent implements OnInit {
                   lineButtonFlag = false;
 
                   console.log(draw_line);
+
+                  if(backwardProductionNetwork.has(shape.shapeID)){
+                    if(backwardProductionNetwork.get(shape.shapeID).indexOf(fromElement) == -1){
+                      backwardProductionNetwork.get(shape.shapeID)?.push(fromElement);
+                    }
+                    else{
+                      canvasGlobal.clearRect(0,0,1380,675);
+                      createLineFlag =false;
+                      createdLine = true;
+                      selectLine = false;
+                      lineButtonFlag = false;
+                      document.getElementById("line")!.style.backgroundColor = "transparent"
+                      for(var i = 0; i < shapesBack.length; i++){
+                        this.placeElement(shapesBack[i], "");
+                      }
+                      break;
+                    }
+                  }else{
+                    backwardProductionNetwork.set(shape.shapeID, [fromElement])
+                  }
                   if(draw_line != null && (draw_line.width != 0 && draw_line.height != 0)){
 
                     this.placeElement(draw_line, "");
@@ -375,11 +405,7 @@ export class HomeComponent implements OnInit {
                   draw_line = null;
                   document.getElementById("line")!.style.backgroundColor = "transparent";
 
-                  if(backwardProductionNetwork.has(shape.shapeID)){
-                    backwardProductionNetwork.get(shape.shapeID)?.push(fromElement)
-                  }else{
-                    backwardProductionNetwork.set(shape.shapeID, [fromElement])
-                  }
+                  
                   console.log(backwardProductionNetwork);
                   fromElement = null;
                 }
@@ -395,6 +421,26 @@ export class HomeComponent implements OnInit {
                   selectLine = false;
                   lineButtonFlag = false;
 
+                  if(forwardProductionNetwork.has(fromElement)){
+                    if(forwardProductionNetwork.get(fromElement).indexOf(shape.shapeID) == -1){
+                      forwardProductionNetwork.get(fromElement).push(shape.shapeID)
+                    }
+                    else{
+                      canvasGlobal.clearRect(0,0,1380,675);
+                      createLineFlag =false;
+                      createdLine = true;
+                      selectLine = false;
+                      lineButtonFlag = false;
+                      document.getElementById("line")!.style.backgroundColor = "transparent"
+                      for(var i = 0; i < shapesBack.length; i++){
+                        this.placeElement(shapesBack[i], "");
+                      }
+                      break;
+                    }
+                  }else{
+                    forwardProductionNetwork.set(fromElement, [shape.shapeID])
+
+                  }
                   if(draw_line != null && (draw_line.width != 0 && draw_line.height != 0)){
                     this.placeElement(draw_line, "");
                     shapesBack.push(draw_line);
@@ -402,12 +448,7 @@ export class HomeComponent implements OnInit {
                   draw_line = null;
                   document.getElementById("line")!.style.backgroundColor = "transparent";
                   console.log(fromElement);
-                  if(forwardProductionNetwork.has(fromElement)){
-                    forwardProductionNetwork.get(fromElement)?.push(shape.shapeID)
-                  }else{
-                    forwardProductionNetwork.set(fromElement, [shape.shapeID])
-
-                  }
+                  
 
                   fromElement = null;
                   console.log(forwardProductionNetwork);
@@ -431,8 +472,6 @@ export class HomeComponent implements OnInit {
 
               }
             }
-
-
 
           }
           draw_line = null;
@@ -481,8 +520,8 @@ export class HomeComponent implements OnInit {
         machine={
           x : e.offsetX,
           y : e.offsetY,
-          width : 60,
-          height : 60,
+          width : 80,
+          height : 80,
           stCo : "black",
           type : "machine",
           fiCo : "darkred",
@@ -597,12 +636,22 @@ export class HomeComponent implements OnInit {
     shapesBack = [];
     forwardProductionNetwork.clear();
     backwardProductionNetwork.clear();
+    machineCounter = 0;
+    queueCounter = 0;
+    clearInterval(this.playEvent)
+    this.ngOnInit();
+    for(var i = 0; i < shapesBack.length; i++){
+      this.placeElement(shapesBack[i], "");
+    }
+
+
   }
 
 //----------------------------------------------------------------------//
 
 
 run(){
+  var playFlag = true;
 
 
   var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
@@ -643,146 +692,184 @@ run(){
 
   })
 
-  const convMap = Object.create(null)
-  forwardProductionNetwork.forEach((val: string[], key: string) => {
-    convMap[key] = val;
+  if(forwardProductionNetwork.size == 0 && backwardProductionNetwork.size == 0){
+    playFlag = false;
+  }
+
+  backwardProductionNetwork.forEach((val : string[], key:string) => {
+    if(!forwardProductionNetwork.get(key)){
+      playFlag = false;
+    }
   });
-  const convMap2 = Object.create(null)
-  backwardProductionNetwork.forEach((val: string[], key: string) => {
-    convMap2[key] = val;
+  forwardProductionNetwork.forEach((val : string[], key:string) => {
+    if(!backwardProductionNetwork.get(key)){
+      playFlag = false;
+    }
   });
 
-  console.log();
-
-  console.log(JSON.stringify(temp))
-  this.server.generateNetwork(JSON.stringify(convMap)).subscribe((data)=>{
-    this.server.generateNetwork(JSON.stringify(convMap2)).subscribe((data)=>{
-        this.server.play().subscribe((data)=>{
-          var serv = this.server;
-          var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
-          var canvasGlobal = boardGlobal.getContext("2d")!;
-          this.playEvent = setInterval(function(this:any){
-            serv.polling().subscribe((x : Object[]) => {
-
-              if(x != null ){
-                console.log(x[0]);
-                canvasGlobal.clearRect(0,0,1380,675);
-
-                let ctr = 0;
-
-                var machines : Machine[] = Object.assign(x[0]);
-                var buffers : Buffer[] = Object.assign(x[1]);
-                console.log(buffers.length)
 
 
+  const convMap = Object.create(null);
+  const convMap2 = Object.create(null);
 
-                for(let i = 0; i < machines.length; i++){
-                  var color;
-
-                  try{
-                    color = machines[i].product.color;
-                  }
-                  catch(e){
-                    color = "darkred"
-                  }
-                  if(color == "null"){
-                    color = "darkred"
-                  }
-                  var machineID = machines[i].machineName;
-                  var areaMachine = machineArea.get(machineID);
-
-
-                  for(var shape of shapesBack){
-
-                    ctr++;
-                    if(shape.shapeID == machineID){
-                      areaMachine.arc(shape.x, shape.y, 0.5*shape.width, 0, 2*Math.PI);
-                      canvasGlobal.beginPath();
-                      canvasGlobal.strokeStyle = shape.stCo;
-                      canvasGlobal.lineWidth = shape.stWi;
-                      canvasGlobal.fillStyle = color;
-                      canvasGlobal.arc(shape.x, shape.y, 0.5*shape.width, 0, 2*Math.PI);
-                      canvasGlobal.fill();
-                      canvasGlobal.stroke();
-                      canvasGlobal.font = "1 20px arial";
-                      canvasGlobal.strokeText("M "+(shape.order).toString(), shape.x-(shape.width/30), shape.y);
-                      canvasGlobal.textAlign="center";
-                      canvasGlobal.textBaseline = "middle";
-                      machineArea.set(machineID, areaMachine);
-                    }
-                  }
-
-                  areaMachine = null;
-                }
-
-                ctr = 0;
-
-                for(let i = 0; i < buffers.length; i++){
-
-                  var bufferID = buffers[i].bufferID;
-                  var areaBuffer = queueArea.get(bufferID);
-
-                  console.log(bufferID);
-                  for(var shape of shapesBack){
-                    ctr++;
-                    if(shape.shapeID == bufferID){
-                      areaBuffer.rect(shape.x, shape.y, shape.width, shape.height);
-                      canvasGlobal.strokeStyle = shape.stCo;
-                      canvasGlobal.lineWidth = shape.stWi;
-                      canvasGlobal.fillStyle = "rgb(0,100,0)"
-                      canvasGlobal.beginPath();
-                      canvasGlobal.rect(shape.x, shape.y, shape.width, shape.height)
-                      canvasGlobal.fill();
-                      canvasGlobal.stroke();
-                      canvasGlobal.font = "1 20px arial";
-                      canvasGlobal.strokeText("Q "+(shape.order).toString(), shape.x+(shape.width/2), shape.y+(shape.height/8));
-                      canvasGlobal.strokeText(buffers[i].size.toString(), shape.x+(shape.width/2), shape.y+(shape.height/2));
-                      canvasGlobal.textAlign="center";
-                      canvasGlobal.textBaseline = "middle";
-
-                      queueArea.set(bufferID, areaBuffer);
-                    }
-
-                  }
-                  areaBuffer = null;
-                }
-              }
-
-              for(var shape of shapesBack){
-                if(shape.type == "line"){
-                  var lineArea = new Path2D();
-                  lineArea.moveTo(shape.x, shape.y);
-                  lineArea.lineTo(shape.width, shape.height);
-                  lineArea.closePath;
-                  canvasGlobal.beginPath();
-                  canvasGlobal.strokeStyle = shape.stCo;
-                  canvasGlobal.lineWidth = shape.stWi;
-                  canvasGlobal.moveTo(shape.x, shape.y);
-                  canvasGlobal.lineTo(shape.width, shape.height);
-                  canvasGlobal.closePath();
-                  canvasGlobal.stroke();
-                  var angle=Math.PI+Math.atan2(shape.height-shape.y,shape.width-shape.x);
-                  var angle1=angle+Math.PI/6;
-                  var angle2=angle-Math.PI/6;
-                  canvasGlobal.beginPath();
-                  canvasGlobal.strokeStyle = shape.stCo;
-                  canvasGlobal.lineWidth = shape.stWi;
-                  canvasGlobal.fillStyle = "white"
-                  canvasGlobal.moveTo(shape.width,shape.height);
-                  canvasGlobal.arc(shape.width,shape.height,20,angle1,angle2,true);
-                  canvasGlobal.lineTo(shape.width,shape.height);
-                  canvasGlobal.fill();
-                  canvasGlobal.closePath();
-                  lineArea = null;
-                }
-
-              }
-
-            });
-          }, 1)
-        });
+  if(playFlag){
+    forwardProductionNetwork.forEach((val: string[], key: string) => {
+      convMap[key] = val;
     });
-  });
+    backwardProductionNetwork.forEach((val: string[], key: string) => {
+      convMap2[key] = val;
+    });
+  }
+
+
+  if(playFlag){
+    this.server.generateNetwork(JSON.stringify(convMap)).subscribe((data)=>{
+      this.server.generateNetwork(JSON.stringify(convMap2)).subscribe((data)=>{
+          this.server.play().subscribe((data)=>{
+            var serv = this.server;
+            var boardGlobal = (<HTMLCanvasElement>document.getElementById("board"));
+            var canvasGlobal = boardGlobal.getContext("2d")!;
+            let scndCtr = 0;
+            var machineServTimeCtr = 0;
+            this.playEvent = setInterval(function(this:any){
+              machineServTimeCtr++;
+              
+              scndCtr++;
+              if(scndCtr == 1000){
+                console.log("1S");
+              }
+              serv.polling().subscribe((x : Object[]) => {
+  
+                if(x != null ){
+                  console.log(x[0]);
+                  canvasGlobal.clearRect(0,0,1380,675);
+  
+                  let ctr = 0;
+  
+                  var machines : Machine[] = Object.assign(x[0]);
+                  var buffers : Buffer[] = Object.assign(x[1]);
+                  console.log(buffers.length)
+  
+  
+  
+                  for(let i = 0; i < machines.length; i++){
+                    var color;
+  
+                    try{
+                      color = machines[i].product.color;
+                    }
+                    catch(e){
+                      color = "darkred"
+                    }
+              
+                    var machineID = machines[i].machineName;
+                    var areaMachine = machineArea.get(machineID);
+  
+  
+                    for(var shape of shapesBack){
+  
+                      ctr++;
+                      if(shape.shapeID == machineID){
+                        areaMachine.arc(shape.x, shape.y, 0.5*shape.width, 0, 2*Math.PI);
+                        canvasGlobal.beginPath();
+                        canvasGlobal.strokeStyle = shape.stCo;
+                        canvasGlobal.lineWidth = shape.stWi;
+                        canvasGlobal.fillStyle = color;
+                        canvasGlobal.arc(shape.x, shape.y, 0.5*shape.width, 0, 2*Math.PI);
+                        canvasGlobal.fill();
+                        canvasGlobal.stroke();
+                        canvasGlobal.font = "icon";
+                        canvasGlobal.textAlign="center";
+                        canvasGlobal.strokeText("M "+(shape.order).toString(), shape.x-(shape.width/30) + 2, shape.y );
+                        if(color != "darkred"){
+                          canvasGlobal.strokeText((machines[i].serviceTime / 1000).toString(), shape.x-(shape.width/30), shape.y + shape.height - 58);
+                        }
+                        else{
+                          canvasGlobal.strokeText("Ready", shape.x-(shape.width/30) + 2, shape.y + shape.height - 58);
+
+                        }
+                        machineArea.set(machineID, areaMachine);
+                      }
+                    }
+  
+                    areaMachine = null;
+                  }
+  
+                  ctr = 0;
+  
+                  for(let i = 0; i < buffers.length; i++){
+  
+                    var bufferID = buffers[i].bufferID;
+                    var areaBuffer = queueArea.get(bufferID);
+  
+                    console.log(bufferID);
+                    for(var shape of shapesBack){
+                      ctr++;
+                      if(shape.shapeID == bufferID){
+                        areaBuffer.rect(shape.x, shape.y, shape.width, shape.height);
+                        canvasGlobal.strokeStyle = shape.stCo;
+                        canvasGlobal.lineWidth = shape.stWi;
+                        canvasGlobal.fillStyle = "rgba(0,100,0, 0.5)"
+                        canvasGlobal.beginPath();
+                        canvasGlobal.rect(shape.x, shape.y, shape.width, shape.height)
+                        canvasGlobal.fill();
+                        canvasGlobal.stroke();
+                        canvasGlobal.font = "icon";
+                        canvasGlobal.textAlign="center";
+
+                        canvasGlobal.strokeText("Q"+(shape.order).toString(), shape.x+(shape.width/2), shape.y+(shape.height/8) + 8);
+  
+                        canvasGlobal.strokeText(buffers[i].size.toString(), shape.x+(shape.width/2), shape.y+(shape.height/2)+8);
+  
+                        queueArea.set(bufferID, areaBuffer);
+                      }
+  
+                    }
+                    areaBuffer = null;
+                  }
+                }
+  
+                for(var shape of shapesBack){
+                  if(shape.type == "line"){
+                    var lineArea = new Path2D();
+                    lineArea.moveTo(shape.x, shape.y);
+                    lineArea.lineTo(shape.width, shape.height);
+                    lineArea.closePath;
+                    canvasGlobal.beginPath();
+                    canvasGlobal.strokeStyle = shape.stCo;
+                    canvasGlobal.lineWidth = shape.stWi;
+                    canvasGlobal.moveTo(shape.x, shape.y);
+                    canvasGlobal.lineTo(shape.width, shape.height);
+                    canvasGlobal.closePath();
+                    canvasGlobal.stroke();
+                    var angle=Math.PI+Math.atan2(shape.height-shape.y,shape.width-shape.x);
+                    var angle1=angle+Math.PI/6;
+                    var angle2=angle-Math.PI/6;
+                    canvasGlobal.beginPath();
+                    canvasGlobal.strokeStyle = shape.stCo;
+                    canvasGlobal.lineWidth = shape.stWi;
+                    canvasGlobal.fillStyle = "white"
+                    canvasGlobal.moveTo(shape.width,shape.height);
+                    canvasGlobal.arc(shape.width,shape.height,20,angle1,angle2,true);
+                    canvasGlobal.lineTo(shape.width,shape.height);
+                    canvasGlobal.fill();
+                    canvasGlobal.closePath();
+                    lineArea = null;
+                  }
+  
+                }
+  
+              });
+            }, 1)
+          });
+      });
+    });
+  }
+  else{
+    console.log("NETWORK IS NOT COMPLETE");
+    alert("EACH MACHINE SHOULD BE CONNECTED TO ONE QUEUE FROM BOTH SIDES");
+  }
+  
 }
 //----------------------------------------------------------------------//
 replay(){
@@ -793,7 +880,7 @@ replay(){
     this.server.replay().subscribe((snapshots : Object[][]) => {
       console.log(snapshots);
       let replayCtr = 0;
-       setInterval(function(){
+       this.replayEvent = setInterval(function(){
         if(snapshots[replayCtr] != null){
           canvasGlobal.clearRect(0,0,1380,675);
 
@@ -830,10 +917,16 @@ replay(){
                 canvasGlobal.arc(shape.x, shape.y, 0.5*shape.width, 0, 2*Math.PI);
                 canvasGlobal.fill();
                 canvasGlobal.stroke();
-                canvasGlobal.font = "1 20px arial";
-                canvasGlobal.strokeText("M "+(shape.order).toString(), shape.x-(shape.width/30), shape.y);
+                canvasGlobal.font = "icon";
                 canvasGlobal.textAlign="center";
-                canvasGlobal.textBaseline = "middle";
+                canvasGlobal.strokeText("M "+(shape.order).toString(), shape.x-(shape.width/30) + 2, shape.y );
+                if(color != "darkred"){
+                  canvasGlobal.strokeText((machines[i].serviceTime / 1000).toString(), shape.x-(shape.width/30), shape.y + shape.height - 58);
+                }
+                else{
+                  canvasGlobal.strokeText("Ready", shape.x-(shape.width/30) + 2, shape.y + shape.height - 58);
+
+                }
                 machineArea.set(machineID, areaMachine);
               }
             }
@@ -858,12 +951,10 @@ replay(){
                 canvasGlobal.rect(shape.x, shape.y, shape.width, shape.height)
                 canvasGlobal.fill();
                 canvasGlobal.stroke();
-                canvasGlobal.font = "1 20px arial";
-                canvasGlobal.strokeText("Q "+(shape.order).toString(), shape.x+(shape.width/2), shape.y+(shape.height/8));
-                canvasGlobal.strokeText(buffers[i].size.toString(), shape.x+(shape.width/2), shape.y+(shape.height/2));
+                canvasGlobal.font = "icon";
                 canvasGlobal.textAlign="center";
-                canvasGlobal.textBaseline = "middle";
-
+                canvasGlobal.strokeText("Q"+(shape.order).toString(), shape.x+(shape.width/2), shape.y+(shape.height/8) + 8);
+                canvasGlobal.strokeText(buffers[i].size.toString(), shape.x+(shape.width/2), shape.y+(shape.height/2)+8);
                 queueArea.set(bufferID, areaBuffer);
               }
 
@@ -912,8 +1003,9 @@ replay(){
 stop(){
   this.server.stop().subscribe((data:string)=>{
     console.log(data)
-    clearInterval(this.playEvent)
-    this.stopReplay = true;
+    clearInterval(this.playEvent);
+    clearInterval(this.replayEvent);
+
 
   });
 }
@@ -925,6 +1017,8 @@ stop(){
 
       machineButtonFlag = false;
       queueButtonFlag  = false;
+      clearInterval(this.playEvent);
+      clearInterval(this.replayEvent);
 
 
       lineButtonFlag = true;
@@ -939,14 +1033,16 @@ stop(){
       queueButtonFlag = false;
       lineButtonFlag = false;
       machineButtonFlag = true;
-
+      clearInterval(this.playEvent);
+      clearInterval(this.replayEvent);
       draw_line = null;
     }
     if(createQueueFlag){
 
       machineButtonFlag  = false;
       lineButtonFlag = false;
-
+      clearInterval(this.playEvent);
+      clearInterval(this.replayEvent);
       queueButtonFlag = true;
       draw_line = null;
     }

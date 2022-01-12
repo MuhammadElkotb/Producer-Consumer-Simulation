@@ -23,10 +23,11 @@ public class Machine {
 
     public Machine(String machineName) {
         this.machineName = machineName;
-        this.serviceTime = ThreadLocalRandom.current().nextInt(1000, 5000);
+        this.serviceTime = ThreadLocalRandom.current().nextInt(600, 5000);
         this.manager = EventManager.getInstance();
         manager.addListener(this.machineName,new MachineObserver(this.machineName));
     }
+
     public Machine copy(){
         Machine newMachine = new Machine(this.machineName);
         newMachine.product = this.product;
@@ -76,20 +77,14 @@ public class Machine {
             Runnable consumer = () -> {
 
                 while (true) {
+
                     synchronized (object) {
 
                         try {
                             while (prevBufferQueue.getProducts().isEmpty()) {
-                                //System.out.println(this.machineName + " is ready ");
-
-
                                 manager.notify(this.machineName, network);
-
                                 object.wait();
-
-
                             }
-
                             this.setProduct(prevBufferQueue.dequeue(network));
                             manager.notify(this.machineName, network);
                             consumed = true;
@@ -100,7 +95,6 @@ public class Machine {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
                     }
                     if(network.stop){
                         this.consumeThread.stop();
@@ -112,13 +106,15 @@ public class Machine {
             Runnable producer = () -> {
                 while (true) {
                     synchronized (object) {
-
                         try {
                             if (!prevBufferQueue.getProducts().isEmpty() && !consumed) {
                                 object.notifyAll();
                             }
                             while (consumed && product != null) {
+                                System.out.println("IN SLEEP");
                                 Thread.sleep(serviceTime);
+
+                                System.out.println("");
                                 nextBufferQueue.enqueue(product, network);
                                 object.notifyAll();
                                 this.setProduct(null);
@@ -129,18 +125,16 @@ public class Machine {
                             e.printStackTrace();
                         }
                     }
-                    if(network.stop){
-                        this.produceThread.stop();
-                    }
                 }
 
             };
 
-            this.produceThread = new Thread(producer);
-            this.consumeThread = new Thread(consumer);
+            Thread produceThread = new Thread(producer);
+            Thread consumeThread = new Thread(consumer);
 
-//            this.prevBufferQueue = prevBufferQueue;
-//            this.nextBufferQueue = nextBufferQueue;
+            System.out.println("CREATED THREAD");
+
+
             produceThread.start();
             consumeThread.start();
 

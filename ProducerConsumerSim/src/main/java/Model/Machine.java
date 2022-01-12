@@ -125,12 +125,15 @@ public class Machine {
                             e.printStackTrace();
                         }
                     }
+                    if(network.stop){
+                        this.produceThread.stop();
+                    }
                 }
 
             };
 
-            Thread produceThread = new Thread(producer);
-            Thread consumeThread = new Thread(consumer);
+            this.produceThread = new Thread(producer);
+            this.consumeThread = new Thread(consumer);
 
             System.out.println("CREATED THREAD");
 
